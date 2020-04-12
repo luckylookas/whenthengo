@@ -16,10 +16,10 @@ func writeThen(w http.ResponseWriter, then *Then) {
 	if then.Delay > 0 {
 		time.Sleep(time.Duration(then.Delay) * time.Millisecond)
 	}
-	w.WriteHeader(then.Status)
 	for key, value := range then.Headers {
 		w.Header().Set(key, value)
 	}
+	w.WriteHeader(then.Status)
 	fmt.Fprintln(w, then.Body)
 }
 

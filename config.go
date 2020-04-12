@@ -13,7 +13,6 @@ func LoadConfig() *Configuration {
 		Port: "8080",
 	}
 	config.FromEnv().To(&conf)
-	
-	
+
 	return &conf
 }

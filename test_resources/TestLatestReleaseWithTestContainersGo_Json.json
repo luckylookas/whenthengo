@@ -1,0 +1,16 @@
+[
+  {
+    "when": {
+      "method": "get",
+      "url": "/path/test"
+    },
+    "then": {
+      "delay": 100,
+      "status": 200,
+      "headers": {
+        "some-header": "some-data"
+      },
+      "body": "k"
+    }
+  }
+]
