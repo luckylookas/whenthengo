@@ -15,6 +15,13 @@ jobs:
         id: go
       - name: Checkout
         uses: actions/checkout@master
+      - name: Get current release
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@master"
+        env:
+          GITHUB_TOKEN: "${{ secrets.gh_token }}"
+      - name: Set env
+        run: echo ::set-env name=RELEASE_VERSION::${{ steps.previoustag.outputs.tag }}
       - name: build
         run: env GOOS=linux GOARCH=amd64 go build -o executable
       - name: Publish to Registry
@@ -23,14 +30,7 @@ jobs:
           name: luckylukas/whenthengo
           username: ${{ secrets.docker_username }}
           password: ${{ secrets.docker_token }}
-          tag_semver: true
-          tags: "latest"
-      - name: Get current release
-        id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@master"
-        env:
-          GITHUB_TOKEN: "${{ secrets.gh_token }}"
-      - name: Set env
-        run: echo ::set-env name=RELEASE_VERSION::${{ steps.previoustag.outputs.tag }}
-
+          tags: "latest,${{ env.RELEASE_VERSION }}"
+      - name: integrationtest
+        run: go test -tags integration
 

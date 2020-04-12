@@ -2,15 +2,34 @@
   {
     "when": {
       "method": "get",
-      "url": "/path/test"
+      "url": "/path/test",
+      "header": {
+        "accept": "application/json"
+      }
     },
     "then": {
-      "delay": 100,
+      "delay": 2000,
       "status": 200,
       "headers": {
         "some-header": "some-data"
       },
       "body": "k"
+    }
+  },
+  {
+    "when": {
+      "method": "post",
+      "url": "/path/test",
+      "header": {
+        "accept": "application/json"
+      },
+      "body": "{     \"data\": \"content\"}"
+    },
+    "then": {
+      "status": 201,
+      "headers": {
+        "some-header": "some-data"
+      }
     }
   }
 ]
