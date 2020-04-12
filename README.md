@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/LuckyLukas/whenthengo/workflows/build/badge.svg)](https://github.com/LuckyLukas/whenthengo/actions)
+[![Build Status](https://github.com/LuckyLukas/whenthengo/workflows/check-build/badge.svg)](https://github.com/LuckyLukas/whenthengo/actions)
 
 # whenthengo
 
