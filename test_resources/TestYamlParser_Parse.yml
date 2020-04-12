@@ -1,0 +1,22 @@
+-
+  when:
+    method: "get"
+    url: "/path/test"
+    headers:
+      Accept: "application/json"
+      Content-Length: 6
+    body: |+
+      abc
+      def
+  then:
+    delay: 100
+    status: 200
+    headers:
+      Content-Length: 1
+    body: "k"
+-
+  when:
+    method: "post"
+    url: "/path/test"
+  then:
+    status: 200

@@ -1,0 +1,29 @@
+[
+  {
+    "when": {
+      "method": "get",
+      "url": "/path/test"
+    },
+    "then": {
+      "delay": 3000,
+      "status": 200,
+      "headers": {
+        "Content-Length": "1"
+      },
+      "body": "k"
+    }
+  },
+  {
+    "when": {
+      "method": "post",
+      "body": "abcdef",
+      "url": "/path/test",
+        "headers": {
+          "Accept": "application/json"
+        }
+    },
+    "then": {
+      "status": 201
+    }
+  }
+]
