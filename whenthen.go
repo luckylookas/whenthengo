@@ -5,7 +5,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -96,14 +99,27 @@ func stripBody(value string) string {
 }
 
 func main() {
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+
 	configuration := LoadConfig()
+
 	log.Println("configuration setup:", configuration)
 	whenthens, err := Parse(configuration)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
+
+	http.HandleFunc("/whenthengoup", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+	})
+
 	http.HandleFunc("/", getHandleFunc(whenthens))
 	
-	log.Fatal(http.ListenAndServe(":"+strings.TrimPrefix(configuration.Port, ":"), nil))
+	go func () {
+		log.Fatal(http.ListenAndServe(":"+strings.TrimPrefix(configuration.Port, ":"), nil))
+	}()
+
+	<-sigs
 }
