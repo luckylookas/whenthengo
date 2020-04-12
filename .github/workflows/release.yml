@@ -1,0 +1,27 @@
+name: release
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.13
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.13
+        id: go
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: build
+        run: env GOOS=linux GOARCH=amd64 go build -o executable
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: luckylukas/whenthengo
+          username: ${{ secrets.docker_username }}
+          password: ${{ secrets.docker_token }}
+          tag_semver: true
+

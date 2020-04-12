@@ -13,17 +13,17 @@ type WhenThen struct {
 }
 
 type When struct {
-	Method  string                 `yaml:"method",json:"method"`
-	URL     string                 `yaml:"url",json:"url"`
-	Headers map[string]string `yaml:"headers",json:"headers"`
-	Body    string                 `yaml:"body",json:"body"`
+	Method  string                 `yaml:"method" json:"method"`
+	URL     string                 `yaml:"url" json:"url"`
+	Headers map[string]string `yaml:"headers" json:"headers"`
+	Body    string                 `yaml:"body" json:"body"`
 }
 
 type Then struct {
-	Status  int                    `yaml:"status"json:"status"`
-	Delay   int                    `yaml:"delay"json:"delay"`
-	Headers map[string]string `yaml:"headers"json:"headers"`
-	Body    string                 `yaml:"body"json:"body"`
+	Status  int                    `yaml:"status" json:"status"`
+	Delay   int                    `yaml:"delay" json:"delay"`
+	Headers map[string]string `yaml:"headers" json:"headers"`
+	Body    string                 `yaml:"body" json:"body"`
 }
 
 type Parser interface {
