@@ -24,5 +24,5 @@ jobs:
           username: ${{ secrets.docker_username }}
           password: ${{ secrets.docker_token }}
           tag_semver: true
-          tag: "latest"
+          tags: "latest"
 
