@@ -1,6 +1,4 @@
-[![Build Status](https://github.com/LuckyLukas/whenthengo/workflows/check-build/badge.svg)](https://github.com/LuckyLukas/whenthengo/actions)
-
-[![Release Integrationtest Status](https://github.com/LuckyLukas/whenthengo/workflows/release/badge.svg)](https://github.com/LuckyLukas/whenthengo/actions)
+[![Build Status](https://github.com/LuckyLukas/whenthengo/workflows/check-build/badge.svg)](https://github.com/LuckyLukas/whenthengo/actions) [![Release Integrationtest Status](https://github.com/LuckyLukas/whenthengo/workflows/release/badge.svg)](https://github.com/LuckyLukas/whenthengo/actions)
 # whenthengo
 
 a simple mock http server to use for testing with packages like
