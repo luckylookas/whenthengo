@@ -14,17 +14,17 @@ whenthengo is configured using _whens_ and _thens_, if the app recognizes an htt
 - all headers have to be passed as string values
 - simplistic matching, no support for fuzzy matches or best effort responses, _whens_ that depend on whitespace positions will likely fail
 
-###whens
+### whens
 
 a when is a set of conditions a request must meet to make the server return the matching _then_.
 
-###thens
+### thens
 
 are linked to one _when_ and describe the expected response.
 
-## parameters:
+## parameters
 
-###whens
+### whens
 
 | property        | type           | desciption  |
 | ------------- |-------------| -----|
@@ -33,7 +33,7 @@ are linked to one _when_ and describe the expected response.
 | headers | map[string]string      |    a map of headers the request should include. This checks for "containment" and is case insensitive (eg.: ```"application/json; encoding=UTF-8"``` with match ```"Application/json"```) |
 | body| string | the request body to match. this will remove all whitespaces when checking for equiality.|
 
-###thens
+### thens
 | property        | type           | desciption  |
 | ------------- |-------------| -----|
 | delay     | int| artificial delay for the response in milliseconds |
@@ -47,7 +47,7 @@ are linked to one _when_ and describe the expected response.
 currently you can specify when-thens in ```yaml```
  and ```json``` format
 
-###json
+### json
 
 ```json
 [
@@ -74,7 +74,7 @@ currently you can specify when-thens in ```yaml```
 ]
 ```
 
-###yaml
+### yaml
 
 ```
     -
