@@ -1,4 +1,4 @@
-package main
+package types
 
 import (
 	"bytes"
@@ -7,18 +7,18 @@ import (
 )
 
 func TestString_CleanUrl(t *testing.T) {
-	assert.Equal(t, "abc/d", cleanUrl("/abc/d/"))
-	assert.Equal(t, "abc/d", cleanUrl("//abc/d// /"))
-	assert.Equal(t, "abc", cleanUrl(" /abc "))
+	assert.Equal(t, "abc/d", CleanUrl("/abc/d/"))
+	assert.Equal(t, "abc/d", CleanUrl("//abc/d// /"))
+	assert.Equal(t, "abc", CleanUrl(" /abc "))
 }
 
 func TestString_CleanMethod(t *testing.T) {
-	assert.Equal(t, "get", cleanUrl("GET"))
-	assert.Equal(t, "get", cleanUrl("get"))
+	assert.Equal(t, "get", CleanMethod("GET"))
+	assert.Equal(t, "get", CleanMethod("get"))
 }
 
 func TestString_CleanBodyString(t *testing.T) {
-	assert.Equal(t, cleanBodyString(`
+	assert.Equal(t, CleanBodyString(`
 		{
 			"some": "json",  
 				  "with":  "spaces"
@@ -30,7 +30,7 @@ func TestString_CleanBodyBytes(t *testing.T) {
 	assert.Equal(t,
 		0,
 		bytes.Compare(
-		cleanBodyBytes([]byte(`
+		CleanBodyBytes([]byte(`
 		{
 			"some": "json",  
 				  "with":  "spaces"
@@ -51,7 +51,7 @@ func TestString_CleanHeaders(t *testing.T) {
 		"Stuff":  {"1;2,3 4"},
 	}
 
-	headers = cleanHeaders(headers)
+	headers = CleanHeaders(headers)
 
 	assert.Equal(t, "application/json", headers["accept"][0])
 	assert.Equal(t, "1234", headers["stuff"][0])

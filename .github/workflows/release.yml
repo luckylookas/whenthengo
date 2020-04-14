@@ -4,8 +4,8 @@ on:
     types: [published]
 
 jobs:
-  build:
-    name: Build
+  release-image:
+    name: release docker image
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go 1.13
@@ -33,4 +33,19 @@ jobs:
           tags: "latest,${{ env.RELEASE_VERSION }}"
       - name: integrationtest
         run: go test -tags integration
+  release-client:
+    name: release client
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go 1.13
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.13
+        id: go
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: build
+        run: cd client;env GOOS=linux GOARCH=amd64 go build -o executable
+      - name: integrationtest
+        run: cd client;go test -tags integration
 

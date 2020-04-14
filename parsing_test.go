@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
+	"github/luckylukas/whenthengo/types"
 	"io"
 	"os"
 	"testing"
@@ -11,23 +12,23 @@ import (
 
 type Mockstorage struct{}
 
-func (_ Mockstorage) Store(WhenThen) (string, error) {
+func (_ Mockstorage) Store(types.WhenThen) (string, error) {
 	return "", nil
 }
 
-func (_ Mockstorage) FindByRequest(_ StoreRequest) (*Then, error) {
+func (_ Mockstorage) FindByRequest(_ types.StoreRequest) (*types.Then, error) {
 	return nil, nil
 }
 
 type MockSuccessParser struct{}
 
-func (_ MockSuccessParser) Parse(reader io.Reader) ([]*WhenThen, error) {
-	return []*WhenThen{}, nil
+func (_ MockSuccessParser) Parse(reader io.Reader) ([]*types.WhenThen, error) {
+	return []*types.WhenThen{}, nil
 }
 
 type MockFailParser struct{}
 
-func (_ MockFailParser) Parse(reader io.Reader) ([]*WhenThen, error) {
+func (_ MockFailParser) Parse(reader io.Reader) ([]*types.WhenThen, error) {
 	return nil, errors.New("some")
 }
 

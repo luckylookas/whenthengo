@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github/luckylukas/whenthengo/types"
 	"gopkg.in/yaml.v3"
 	"io"
 	"io/ioutil"
@@ -54,23 +55,23 @@ func (parser YamlParser) castHeaders(items map[string]interface{}) (headers map[
 	return headers
 }
 
-func (parser YamlParser) Parse(reader io.Reader) ([]*WhenThen, error) {
+func (parser YamlParser) Parse(reader io.Reader) ([]*types.WhenThen, error) {
 	whenthen := make([]*WhenThenYaml, 0)
 	buffer, err := ioutil.ReadAll(reader)
 	if err != nil {
 		return nil, err
 	}
 	err = yaml.Unmarshal(buffer, &whenthen)
-	var ret = make([]*WhenThen, len(whenthen))
+	var ret = make([]*types.WhenThen, len(whenthen))
 	for i, item := range whenthen {
-		ret[i] = &WhenThen{
-			When{
+		ret[i] = &types.WhenThen{
+			When:types.When{
 				Method:  item.When.Method,
 				URL:     item.When.URL,
 				Headers: parser.castHeaders(item.When.Headers),
 				Body:    item.When.Body,
 			},
-			Then{
+			Then: types.Then{
 				Status:  item.Then.Status,
 				Delay:   item.Then.Delay,
 				Headers: parser.castHeaders(item.Then.Headers),

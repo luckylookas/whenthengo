@@ -3,78 +3,33 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io"
+	"github/luckylukas/whenthengo/types"
 	"io/ioutil"
 	"log"
 	"strings"
 )
 
-type Header map[string][]string
-
-func (h Header) containsForKey(key string, value string) bool {
-	if value == "" || h[key] == nil || len(h[key]) == 0 {
-		return true
-	}
-
-	for _, i := range h[key] {
-		if i == value {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (h Header) ContainsAllForKey(key string, values ...string) (contains bool) {
-	contains = true
-	for _, v := range values {
-		contains = contains && h.containsForKey(key, v)
-	}
-	return contains
-}
-
-type StoreRequest struct {
-	Url     string
-	Body    io.Reader
-	Headers Header
-	Method  string
-}
-
-func NewStoreRequest(url, method string, header Header, body io.Reader) StoreRequest {
-	return StoreRequest{
-		Url:     cleanUrl(url),
-		Method:  cleanMethod(method),
-		Body:    CleanBodyPipe{body},
-		Headers: cleanHeaders(header),
-	}
-}
-
-type Store interface {
-	Store(WhenThen) (string, error)
-	FindByRequest(StoreRequest) (*Then, error)
-}
-
-type InMemoryStore map[string]*WhenThen
-
 var NOT_FOUND = errors.New("")
 
-func (s InMemoryStore) getWhenThenKey(whenthen *WhenThen) string {
-	return fmt.Sprintf("%s#%s", cleanMethod(whenthen.When.Method), cleanUrl(whenthen.When.URL))
+type InMemoryStore map[string]*types.WhenThen
+
+func (s InMemoryStore) getWhenThenKey(whenthen *types.WhenThen) string {
+	return fmt.Sprintf("%s#%s", types.CleanMethod(whenthen.When.Method), types.CleanUrl(whenthen.When.URL))
 }
 
-func (s InMemoryStore) getWhenThenKeyFromRequest(r StoreRequest) string {
-	return fmt.Sprintf("%s#%s", cleanMethod(r.Method), cleanUrl(r.Url))
+func (s InMemoryStore) getWhenThenKeyFromRequest(r types.StoreRequest) string {
+	return fmt.Sprintf("%s#%s", types.CleanMethod(r.Method), types.CleanUrl(r.Url))
 }
 
-func (s InMemoryStore) Store(whenthen WhenThen) (key string, err error) {
-	cleaned := &WhenThen{
-		When{
-			Method:  cleanMethod(whenthen.When.Method),
-			URL:     cleanUrl(whenthen.When.URL),
-			Headers: cleanHeaders(whenthen.When.Headers),
-			Body:    cleanBodyString(whenthen.When.Body),
+func (s InMemoryStore) Store(whenthen types.WhenThen) (key string, err error) {
+	cleaned := &types.WhenThen{
+		When: types.When{
+			Method:  types.CleanMethod(whenthen.When.Method),
+			URL:     types.CleanUrl(whenthen.When.URL),
+			Headers: types.CleanHeaders(whenthen.When.Headers),
+			Body:    types.CleanBodyString(whenthen.When.Body),
 		},
-		Then{
+		Then: types.Then{
 			Status:  whenthen.Then.Status,
 			Delay:   whenthen.Then.Delay,
 			Headers: whenthen.Then.Headers,
@@ -87,7 +42,7 @@ func (s InMemoryStore) Store(whenthen WhenThen) (key string, err error) {
 	return key, nil
 }
 
-func (s InMemoryStore) getByKey(key string) (*WhenThen, error) {
+func (s InMemoryStore) getByKey(key string) (*types.WhenThen, error) {
 	ret, ok := s[key]
 	if ! ok {
 		return nil, NOT_FOUND
@@ -95,7 +50,7 @@ func (s InMemoryStore) getByKey(key string) (*WhenThen, error) {
 	return ret, nil
 }
 
-func (s InMemoryStore) FindByRequest(r StoreRequest) (*Then, error) {
+func (s InMemoryStore) FindByRequest(r types.StoreRequest) (*types.Then, error) {
 	key := s.getWhenThenKeyFromRequest(r)
 	item, err := s.getByKey(key)
 	if err != nil {
@@ -108,7 +63,7 @@ func (s InMemoryStore) FindByRequest(r StoreRequest) (*Then, error) {
 		}
 	}
 
-	requestBody, err := ioutil.ReadAll(CleanBodyPipe{r.Body})
+	requestBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return nil, fmt.Errorf("error reading request %s, %w", r.Url, err)
 	}

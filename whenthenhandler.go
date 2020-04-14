@@ -3,15 +3,38 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github/luckylukas/whenthengo/types"
 	"log"
 	"net/http"
 	"time"
 )
 
+func getAddingFunc(storage *InMemoryStore) http.HandlerFunc {
+	return func (w http.ResponseWriter, r *http.Request) {
+		defer r.Body.Close()
+		whenthens, err :=  JsonParser{}.Parse(r.Body)
+		if err != nil {
+			w.WriteHeader(500)
+			log.Println(err)
+			return
+		}
+
+		for _, item := range whenthens {
+			_, err := storage.Store(*item)
+			if err != nil {
+				w.WriteHeader(500)
+				log.Println(err)
+				return
+			}
+		}
+		w.WriteHeader(201)
+	}
+}
+
 func getHandleFunc(storage *InMemoryStore) http.HandlerFunc {
 	return func (w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
-		then, err := storage.FindByRequest(NewStoreRequest(r.URL.Path, r.Method, Header(r.Header), r.Body))
+		then, err := storage.FindByRequest(types.NewStoreRequest(r.URL.Path, r.Method, types.Header(r.Header), r.Body))
 		if errors.Is(err, NOT_FOUND) {
 			w.WriteHeader(404)
 			fmt.Fprintln(w, errors.Unwrap(err))
@@ -27,7 +50,7 @@ func getHandleFunc(storage *InMemoryStore) http.HandlerFunc {
 	}
 }
 
-func writeThen(w http.ResponseWriter, then *Then) {
+func writeThen(w http.ResponseWriter, then *types.Then) {
 	if then.Delay > 0 {
 		time.Sleep(time.Duration(then.Delay) * time.Millisecond)
 	}
