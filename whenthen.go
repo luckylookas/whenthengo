@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github/luckylukas/whenthengo/types"
 	"log"
 	"net/http"
 	"os"
@@ -10,7 +11,7 @@ import (
 )
 
 func main() {
-	var storage InMemoryStore = make(map[string]*WhenThen)
+	var storage InMemoryStore = make(map[string]*types.WhenThen)
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
@@ -21,6 +22,8 @@ func main() {
 		log.Fatal(err)
 		return
 	}
+
+	http.HandleFunc("/whenthengo/whenthen", getAddingFunc(&storage))
 
 	http.HandleFunc("/whenthengo/up", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)

@@ -3,49 +3,29 @@ package main
 import (
 	"errors"
 	"fmt"
-	"io"
+	"github/luckylukas/whenthengo/types"
 	"log"
 	"os"
 )
 
-type WhenThen struct {
-	When When
-	Then Then
-}
-
-type When struct {
-	Method  string
-	URL     string
-	Headers map[string][]string
-	Body    string
-}
-
-type Then struct {
-	Status  int
-	Delay   int
-	Headers map[string][]string
-	Body    string
-}
-
-type Parser interface {
-	Parse(reader io.Reader) ([]*WhenThen, error)
-}
-
-var parsers = map[string]Parser{}
+var parsers = map[string]types.Parser{}
 
 func init() {
 	parsers["json"] = JsonParser{}
 	parsers["yaml"] = YamlParser{}
 }
 
-func Validate(whenthen *WhenThen) error {
+func Validate(whenthen *types.WhenThen) error {
 	if whenthen.When.Method == "" || whenthen.When.URL == "" || whenthen.Then.Status == 0 {
 		return errors.New("a whenthen requires at least a url, a method and a response status to work")
 	}
 	return nil
 }
 
-func ParseAndStoreWhenThens(configuration *Configuration, storage Store) error {
+func ParseAndStoreWhenThens(configuration *Configuration, storage types.Store) error {
+	if configuration.WhenThen == "" {
+		return nil
+	}
 	for _, parser := range parsers {
 		file, err := os.Open(configuration.WhenThen)
 		if err != nil {
@@ -54,6 +34,8 @@ func ParseAndStoreWhenThens(configuration *Configuration, storage Store) error {
 			}
 			return err
 		}
+
+
 		items, err := parser.Parse(file)
 		if err != nil {
 			log.Println("parsing with ", parser, "failed")

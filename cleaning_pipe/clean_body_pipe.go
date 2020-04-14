@@ -1,4 +1,4 @@
-package main
+package cleaning_pipe
 
 import (
 	"bytes"
@@ -6,27 +6,33 @@ import (
 )
 
 /**
-
- */
-
-/**
 cleans a Readers contents while reading
 
 will consume but NOT CLOSE the wrapped reader.
 
-Benchmarks comparing a wrapped StringReader with a naked StringReader
+Benchmarks comparing a wrapped StringReader (demoCleaner) with a naked StringReader
 
-BenchmarkCleanBodyPipe_Read1000-4        5133885               221 ns/op
-BenchmarkCleanBodyPipe_Read100000-4      5284644               229 ns/op
+BenchmarkCleanerPipe_Read1000-4        5133885               221 ns/op
+BenchmarkCleanerPipe_Read100000-4      5284644               229 ns/op
 BenchmarkNakedReader_Read1000-4          6629119               176 ns/op
 BenchmarkNakedReader_Read100000-4        6636699               177 ns/op
-
 */
-type CleanBodyPipe struct {
-	in io.Reader
+
+type CleanerFunc func([]byte) []byte
+
+type CleanerPipe struct {
+	in      io.Reader
+	cleaner func([]byte) []byte
 }
 
-func (r CleanBodyPipe) Read(p []byte) (n int, err error) {
+func NewCleanerPipe(c CleanerFunc, in io.Reader) CleanerPipe {
+	return CleanerPipe{
+		in:      in,
+		cleaner: c,
+	}
+}
+
+func (r CleanerPipe) Read(p []byte) (n int, err error) {
 	if r.in == nil {
 		return 0, io.EOF
 	}
@@ -34,16 +40,17 @@ func (r CleanBodyPipe) Read(p []byte) (n int, err error) {
 
 	if n <= 0 {
 		return n, err
-
 	}
 
-	tmp := cleanBodyBytes(p)
-	copy(p, tmp)
+	tmp := r.cleaner(p)
+
+	if &tmp != &p {
+		copy(p, tmp)
+	}
 
 	if len(tmp) < len(p) {
 		//something was deleted
-
-		if firstZero := bytes.IndexByte(p, '\x00'); firstZero > 0 {
+		if firstZero := bytes.IndexByte(p, '\x00'); firstZero >= 0 {
 			//case 1: p was not full and we deleted bytes --> there are trailing zeroes in p and tmp
 			return firstZero, err
 		}

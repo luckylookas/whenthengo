@@ -34,9 +34,9 @@ func TestLatestReleaseWithTestContainersGo_Json(t *testing.T) {
 	req := testcontainers.GenericContainerRequest{
 		ContainerRequest: testcontainers.ContainerRequest{
 			Image:        "luckylukas/whenthengo:" + version,
-			ExposedPorts: []string{"8080/tcp"},
+			ExposedPorts: []string{"80/tcp"},
 			WaitingFor:    &wait.HTTPStrategy{
-				Port:              "8080/tcp",
+				Port:              "80/tcp",
 				Path:              "/whenthengoup",
 				StatusCodeMatcher: func (status int) bool {
 					return status == http.StatusOK
@@ -44,7 +44,7 @@ func TestLatestReleaseWithTestContainersGo_Json(t *testing.T) {
 				UseTLS:            false,
 			},
 			Env: map[string]string{
-				"PORT": "8080",
+				"PORT": "80",
 				"WHENTHEN": containerWhenThenFile,
 			},
 			BindMounts: map[string]string{
@@ -68,7 +68,7 @@ func TestLatestReleaseWithTestContainersGo_Json(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotEmpty(t, ip)
 
-	port, err := container.MappedPort(ctx, "8080")
+	port, err := container.MappedPort(ctx, "80")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, port.Port())
 
