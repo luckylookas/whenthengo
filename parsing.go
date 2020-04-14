@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -13,17 +14,17 @@ type WhenThen struct {
 }
 
 type When struct {
-	Method  string                 `yaml:"method" json:"method"`
-	URL     string                 `yaml:"url" json:"url"`
-	Headers map[string]string `yaml:"headers" json:"headers"`
-	Body    string                 `yaml:"body" json:"body"`
+	Method  string
+	URL     string
+	Headers map[string][]string
+	Body    string
 }
 
 type Then struct {
-	Status  int                    `yaml:"status" json:"status"`
-	Delay   int                    `yaml:"delay" json:"delay"`
-	Headers map[string]string `yaml:"headers" json:"headers"`
-	Body    string                 `yaml:"body" json:"body"`
+	Status  int
+	Delay   int
+	Headers map[string][]string
+	Body    string
 }
 
 type Parser interface {
@@ -37,21 +38,38 @@ func init() {
 	parsers["yaml"] = YamlParser{}
 }
 
-func Parse (configuration *Configuration) (ret []*WhenThen, err error) {
-	var file *os.File
+func Validate(whenthen *WhenThen) error {
+	if whenthen.When.Method == "" || whenthen.When.URL == "" || whenthen.Then.Status == 0 {
+		return errors.New("a whenthen requires at least a url, a method and a response status to work")
+	}
+	return nil
+}
+
+func ParseAndStoreWhenThens(configuration *Configuration, storage Store) error {
 	for _, parser := range parsers {
-		file, err = os.Open(configuration.WhenThen)
+		file, err := os.Open(configuration.WhenThen)
 		if err != nil {
-			return nil, err
+			if os.IsNotExist(err) {
+				return nil
+			}
+			return err
 		}
-		ret, err = parser.Parse(file)
+		items, err := parser.Parse(file)
 		if err != nil {
 			log.Println("parsing with ", parser, "failed")
 			log.Println(err)
+			continue
 		}
-		if err == nil && ret != nil {
-			return ret, nil
+
+		for _, item := range items {
+			if err := Validate(item); err != nil {
+				return err
+			}
+			if key, err := storage.Store(*item); err != nil {
+				return fmt.Errorf("could not store whenthen for %s: %v", key, err)
+			}
 		}
+		return nil
 	}
-	return nil, errors.New("SORRY! no parser could parse the contents of whenthen file.")
+	return errors.New("SORRY! no parser could parse contents of whenthen file.")
 }

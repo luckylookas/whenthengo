@@ -10,7 +10,7 @@ type Configuration struct {
 func LoadConfig() *Configuration {
 	conf := Configuration{
 		WhenThen: "./whenthen.json",
-		Port: "8080",
+		Port: "80",
 	}
 	config.FromEnv().To(&conf)
 

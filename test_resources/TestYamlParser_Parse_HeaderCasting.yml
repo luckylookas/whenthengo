@@ -1,0 +1,19 @@
+---
+- when:
+    method: get
+    url: "/path/test"
+    headers:
+      String: 'json'
+      Int: 1
+      Float: 1.23
+      StringSlice: ['json', 'yaml']
+      IntSlice: [1, 2]
+  then:
+    delay: 100
+    status: 200
+    headers:
+      String: 'json'
+      Int: 1
+      Float: 1.23
+      StringSlice: ['json', 'yaml']
+      IntSlice: [1, 2]
