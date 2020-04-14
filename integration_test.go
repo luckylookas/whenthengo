@@ -96,7 +96,7 @@ func TestLatestReleaseWithTestContainersGo_Json(t *testing.T) {
 	assert.Equal(t, "k\n", string(body))
 
 
-	// POST with whitepsace ignoring body matcher
+	// POST with whitepsace ignoring Body matcher
 	httprequest, err = http.NewRequest(http.MethodPost, fmt.Sprintf("http://%s:%s/path/test",
 		ip, port.Port()),
 		strings.NewReader(`{"data":"content"}`))
