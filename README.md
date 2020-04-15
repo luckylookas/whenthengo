@@ -10,8 +10,10 @@ a simple mock http server to use for testing with packages like
 # Table of Contents
 1. [what?](#what)
 2. [limitations](#limitations)
-3. [Third Example](#third-example)
-4. [Fourth Example](#fourth-examplehttpwwwfourthexamplecom
+3. [whens](#whens)
+4. [thens](#thens)
+5. [api](#api)
+6. [config format](#formats)
 
 ## what? <a name="what"></a>
 
@@ -22,15 +24,15 @@ whenthengo is configured using _whens_ and _thens_, if the app recognizes an htt
 - no support for fuzzy matches or best effort responses, 
 - _whens_ that depend on whitespace positions or case in headers or body may fail to match
 
-### whens
+### whens <a name="whens"></a>
 
 a when is a set of conditions a request must meet to make the server return the matching _then_.
 
-### thens
+### thens <a name="thens"></a>
 
 are linked to one _when_ and describe the expected response.
 
-## parameters
+## api parameters <a name="api"></a>
 
 ### whens
 
@@ -50,6 +52,20 @@ are linked to one _when_ and describe the expected response.
 | body| string | the expected response body|
 
 
+### api /whenthengo
+
+#### GET /up
+returns an empty ```200 OK```.
+ 
+This can be used to check if the app is up and ready to handle requests.
+
+#### POST /whenthen
+
+post a whenthen as JSON in the request body, just as you would with the configuration file.
+Whenthengo will add it to existing configured whenthens.
+
+We also provide a client for that under [here](github.com/luckylukas/whenthengo/client)
+
 ### matching
 
 Whenthengo will match case insensitive and ignoring whitespace where ever it can.
@@ -57,7 +73,7 @@ It will ignore superfluous headers in the request (which don't match any key in 
 
 _but_ will strictly match ALL header values for any key present in the when. (concatenated with &&)
 
-## input formats
+## input formats <a name="formats"></a>
 
 currently you can specify when-thens in ```yaml```
  and ```json``` format
@@ -114,20 +130,6 @@ currently you can specify when-thens in ```yaml```
         ...
 
 ```
-
-## api /whenthengo
-
-### GET /up
-returns an empty ```200 OK```.
- 
-This can be used to check if the app is up and ready to handle requests.
-
-### POST /whenthen
-
-post a whenthen as JSON in the request body, just as you would with the configuration file.
-Whenthengo will add it to existing configured whenthens.
-
-We also provide a client for that under [here](github.com/luckylukas/whenthengo/client)
 
 ## bugs and collaboration
 
