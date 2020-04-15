@@ -1,8 +1,10 @@
 version: '3.0'
 services:
   whenthen:
-    image: "luckylukas/whenthen:latest"
+    build: .
     ports:
       - "8080:80"
     volumes:
-      - ./:/whenthen
+      - ./:/in
+    environment:
+      - WHENTHEN=/in/whenthen.json

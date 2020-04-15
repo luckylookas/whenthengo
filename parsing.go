@@ -23,7 +23,9 @@ func Validate(whenthen *types.WhenThen) error {
 }
 
 func ParseAndStoreWhenThens(configuration *Configuration, storage types.Store) error {
+	log.Println("loading config from", configuration.WhenThen)
 	if configuration.WhenThen == "" {
+		log.Println("no configuration, starting empty")
 		return nil
 	}
 	for _, parser := range parsers {
