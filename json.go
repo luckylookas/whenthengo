@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/luckylukas/whenthengo/types"
 	"io"
 	"io/ioutil"
 )
@@ -55,23 +54,23 @@ func (parser JsonParser) castHeaders(items map[string]interface{}) (headers map[
 	return headers
 }
 
-func (parser JsonParser) Parse(reader io.Reader) ([]*types.WhenThen, error) {
+func (parser JsonParser) Parse(reader io.Reader) ([]*WhenThen, error) {
 	whenthen := make([]*WhenThenJson, 0)
 	buffer, err := ioutil.ReadAll(reader)
 	if err != nil {
 		return nil, err
 	}
 	err = json.Unmarshal(buffer, &whenthen)
-	var ret = make([]*types.WhenThen, len(whenthen))
+	var ret = make([]*WhenThen, len(whenthen))
 	for i, item := range whenthen {
-		ret[i] = &types.WhenThen{
-			When: types.When{
+		ret[i] = &WhenThen{
+			When: When{
 				Method:  item.When.Method,
 				URL:     item.When.URL,
 				Headers: parser.castHeaders(item.When.Headers),
 				Body:    item.When.Body,
 			},
-			Then: types.Then{
+			Then: Then{
 				Status:  item.Then.Status,
 				Delay:   item.Then.Delay,
 				Headers: parser.castHeaders(item.Then.Headers),

@@ -3,16 +3,15 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/luckylukas/whenthengo/types"
 	"log"
 	"net/http"
 	"time"
 )
 
-func getAddingFunc(storage *InMemoryStore) http.HandlerFunc {
-	return func (w http.ResponseWriter, r *http.Request) {
+func getAddingFunc(storage Store) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
-		whenthens, err :=  JsonParser{}.Parse(r.Body)
+		whenthens, err := JsonParser{}.Parse(r.Body)
 		if err != nil {
 			w.WriteHeader(500)
 			log.Println(err)
@@ -31,10 +30,12 @@ func getAddingFunc(storage *InMemoryStore) http.HandlerFunc {
 	}
 }
 
-func getHandleFunc(storage *InMemoryStore) http.HandlerFunc {
-	return func (w http.ResponseWriter, r *http.Request) {
-		defer r.Body.Close()
-		then, err := storage.FindByRequest(types.NewStoreRequest(r.URL.Path, r.Method, types.Header(r.Header), r.Body))
+func getHandleFunc(storage Store) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Body != nil {
+			defer r.Body.Close()
+		}
+		then, err := storage.FindByRequest(NewStoreRequest(r.URL.Path, r.Method, Header(r.Header), r.Body))
 		if errors.Is(err, NOT_FOUND) {
 			w.WriteHeader(404)
 			fmt.Fprint(w, errors.Unwrap(err))
@@ -43,14 +44,14 @@ func getHandleFunc(storage *InMemoryStore) http.HandlerFunc {
 		if err != nil {
 			w.WriteHeader(500)
 			log.Println(err)
-
+			return
 		}
 		writeThen(w, then)
 		return
 	}
 }
 
-func writeThen(w http.ResponseWriter, then *types.Then) {
+func writeThen(w http.ResponseWriter, then *Then) {
 	if then.Delay > 0 {
 		time.Sleep(time.Duration(then.Delay) * time.Millisecond)
 	}

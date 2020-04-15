@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/luckylukas/whenthengo/types"
 	"log"
 	"net/http"
 	"os"
@@ -11,7 +10,7 @@ import (
 )
 
 func main() {
-	var storage InMemoryStore = make(map[string]*types.WhenThen)
+	var storage InMemoryStore = make(map[string]*WhenThen)
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)

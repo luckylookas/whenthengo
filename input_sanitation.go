@@ -1,4 +1,4 @@
-package types
+package main
 
 import (
 	"bytes"
@@ -35,12 +35,12 @@ func cleanHeaderValues(values []string) []string {
 
 func cleanHeaderValue(header string) string {
 	return strings.ReplaceAll(
-				strings.ReplaceAll(
-					strings.ReplaceAll(
-						strings.ToLower(header),
-						" ", ""),
-						",", ""),
-						";", "")
+		strings.ReplaceAll(
+			strings.ReplaceAll(
+				strings.ToLower(header),
+				" ", ""),
+			",", ""),
+		";", "")
 }
 
 func cleanHeaderKey(header string) string {

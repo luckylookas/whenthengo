@@ -2,18 +2,21 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/stretchr/testify/assert"
-	"github.com/luckylukas/whenthengo/types"
 	"io"
+	"io/ioutil"
 	"net/http"
+	"net/url"
+	"strings"
 	"testing"
 )
 
-func NewMockWriter(nested io.Writer) mockResponseWriter{
+func NewMockWriter(nested io.Writer) mockResponseWriter {
 	return mockResponseWriter{
 		header: make(http.Header),
 		status: new(int),
-		Body:  nested,
+		Body:   nested,
 	}
 }
 
@@ -39,17 +42,154 @@ func TestWriteThen(t *testing.T) {
 	actual := bytes.Buffer{}
 	writer := NewMockWriter(&actual)
 
-	writeThen(writer, &types.Then{
-		Status:  100,
-		Delay:   200,
-		Headers: types.Header{
+	writeThen(writer, &Then{
+		Status: 100,
+		Delay:  200,
+		Headers: Header{
 			"some-data": []string{"some", "values"},
 		},
-		Body:    `{"content":"a"}`,
+		Body: `{"content":"a"}`,
 	})
 
 	assert.Equal(t, 100, *writer.status)
 	assert.Equal(t, "some", writer.header.Get("some-data"))
 	assert.ElementsMatch(t, []string{"some", "values"}, writer.header["Some-Data"])
 	assert.ElementsMatch(t, actual.Bytes(), []byte(`{"content":"a"}`))
+}
+
+func TestGetAddingFunc(t *testing.T) {
+	req := &http.Request{
+		URL: &url.URL{
+			Path:       "/path",
+		},
+		Method: http.MethodGet,
+		Body: ioutil.NopCloser(strings.NewReader(`[{"When":{"method":"get", "uri": "/path"}, "Then": {"status": 200}}]`)),
+	}
+
+	buffer := &bytes.Buffer{}
+	writer := NewMockWriter(buffer)
+
+	getAddingFunc(MockSuccessStorage{})(writer, req)
+
+	assert.Equal(t, *writer.status, 201)
+}
+
+func TestGetAddingFunc_JsonMalformed(t *testing.T) {
+	req := &http.Request{
+		URL: &url.URL{
+			Path:       "/path",
+		},
+		Method: http.MethodGet,
+		Body: ioutil.NopCloser(strings.NewReader(`hen":{"method":"get", "uri": "/path"}, "Then": {"status": 200}}]`)),
+	}
+
+	buffer := &bytes.Buffer{}
+	writer := NewMockWriter(buffer)
+
+	getAddingFunc(MockSuccessStorage{})(writer, req)
+
+	assert.Equal(t, *writer.status, 500)
+}
+
+
+func TestGetAddingFunc_StorageError(t *testing.T) {
+	req := &http.Request{
+		URL: &url.URL{
+			Path:       "/path",
+		},
+		Method: http.MethodGet,
+		Body: ioutil.NopCloser(strings.NewReader(`[{"When":{"method":"get", "uri": "/path"}, "Then": {"status": 200}}]`)),
+	}
+
+	buffer := &bytes.Buffer{}
+	writer := NewMockWriter(buffer)
+
+	getAddingFunc(MockFailStorage{})(writer, req)
+
+	assert.Equal(t, *writer.status, 500)
+}
+
+func TestGetHandleFunc(t *testing.T) {
+	req := &http.Request{
+		URL: &url.URL{
+			Path:       "/path",
+		},
+		Method: http.MethodGet,
+	}
+
+	buffer := &bytes.Buffer{}
+	writer := NewMockWriter(buffer)
+
+	getHandleFunc(MockSuccessStorage{})(writer, req)
+
+	assert.Equal(t, *writer.status, 201)
+}
+
+func TestGetHandleFunc_Body(t *testing.T) {
+	req := &http.Request{
+		URL: &url.URL{
+			Path:       "/any",
+		},
+		Method: http.MethodGet,
+		Body: ioutil.NopCloser(strings.NewReader(`[{"When":{"method":"any", "uri": "/any"}, "Then": {"status": 200}}]`)),
+	}
+
+	buffer := &bytes.Buffer{}
+	writer := NewMockWriter(buffer)
+
+	getHandleFunc(MockSuccessStorage{})(writer, req)
+
+	assert.Equal(t, *writer.status, 201)
+}
+
+func TestGetHandleFunc_NoMatch(t *testing.T) {
+	req := &http.Request{
+		URL: &url.URL{
+			Path:       "/any",
+		},
+		Method: http.MethodGet,
+		Body: ioutil.NopCloser(strings.NewReader(`any`)),
+	}
+
+	buffer := &bytes.Buffer{}
+	writer := NewMockWriter(buffer)
+
+	getHandleFunc(MockFailStorage{Err: NOT_FOUND})(writer, req)
+
+	assert.Equal(t, *writer.status, 404)
+}
+
+
+func TestGetHandleFunc_WrappedErrorNoMatch(t *testing.T) {
+	req := &http.Request{
+		URL: &url.URL{
+			Path:       "/any",
+		},
+		Method: http.MethodGet,
+		Body: ioutil.NopCloser(strings.NewReader(`any`)),
+	}
+
+	buffer := &bytes.Buffer{}
+	writer := NewMockWriter(buffer)
+
+	getHandleFunc(MockFailStorage{Err: fmt.Errorf("metadata %w", NOT_FOUND)})(writer, req)
+
+	assert.Equal(t, *writer.status, 404)
+}
+
+func TestGetHandleFunc_UnknownError(t *testing.T) {
+	req := &http.Request{
+		URL: &url.URL{
+			Path:       "/any",
+		},
+		Method: http.MethodGet,
+		Body: ioutil.NopCloser(strings.NewReader(`any`)),
+	}
+
+	buffer := &bytes.Buffer{}
+	writer := NewMockWriter(buffer)
+
+	getHandleFunc(MockFailStorage{})(writer, req)
+
+	assert.Equal(t, *writer.status, 500)
 }

@@ -35,16 +35,16 @@ func TestLatestReleaseWithTestContainersGo_Json(t *testing.T) {
 		ContainerRequest: testcontainers.ContainerRequest{
 			Image:        "luckylukas/whenthengo:" + version,
 			ExposedPorts: []string{"80/tcp"},
-			WaitingFor:    &wait.HTTPStrategy{
-				Port:              "80/tcp",
-				Path:              "/whenthengoup",
-				StatusCodeMatcher: func (status int) bool {
+			WaitingFor: &wait.HTTPStrategy{
+				Port: "80/tcp",
+				Path: "/whenthengoup",
+				StatusCodeMatcher: func(status int) bool {
 					return status == http.StatusOK
-				}		,
-				UseTLS:            false,
+				},
+				UseTLS: false,
 			},
 			Env: map[string]string{
-				"PORT": "80",
+				"PORT":     "80",
 				"WHENTHEN": containerWhenThenFile,
 			},
 			BindMounts: map[string]string{
@@ -56,7 +56,7 @@ func TestLatestReleaseWithTestContainersGo_Json(t *testing.T) {
 	ctx := context.Background()
 	container, err := testcontainers.GenericContainer(ctx, req)
 	if err != nil {
-		if strings.Contains(err.Error(),  "Cannot connect to the Docker daemon") {
+		if strings.Contains(err.Error(), "Cannot connect to the Docker daemon") {
 			t.Log("docker socket error when starting container - this is a known issue and does not fail the test")
 		} else {
 			t.Fatal(err)
@@ -71,7 +71,6 @@ func TestLatestReleaseWithTestContainersGo_Json(t *testing.T) {
 	port, err := container.MappedPort(ctx, "80")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, port.Port())
-
 
 	// GET
 	httprequest, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://%s:%s/path/test", ip, port.Port()), nil)
@@ -94,7 +93,6 @@ func TestLatestReleaseWithTestContainersGo_Json(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "some-data", resp.Header.Get("some-header"))
 	assert.Equal(t, "k", string(body))
-
 
 	// POST with whitepsace ignoring Body matcher
 	httprequest, err = http.NewRequest(http.MethodPost, fmt.Sprintf("http://%s:%s/path/test",

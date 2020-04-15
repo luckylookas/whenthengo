@@ -3,26 +3,25 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/luckylukas/whenthengo/types"
 	"log"
 	"os"
 )
 
-var parsers = map[string]types.Parser{}
+var parsers = map[string]Parser{}
 
 func init() {
 	parsers["json"] = JsonParser{}
 	parsers["yaml"] = YamlParser{}
 }
 
-func Validate(whenthen *types.WhenThen) error {
+func Validate(whenthen *WhenThen) error {
 	if whenthen.When.Method == "" || whenthen.When.URL == "" || whenthen.Then.Status == 0 {
 		return errors.New("a whenthen requires at least a url, a method and a response status to work")
 	}
 	return nil
 }
 
-func ParseAndStoreWhenThens(configuration *Configuration, storage types.Store) error {
+func ParseAndStoreWhenThens(configuration *Configuration, storage Store) error {
 	log.Println("loading config from", configuration.WhenThen)
 	if configuration.WhenThen == "" {
 		log.Println("no configuration, starting empty")
@@ -36,7 +35,6 @@ func ParseAndStoreWhenThens(configuration *Configuration, storage types.Store) e
 			}
 			return err
 		}
-
 
 		items, err := parser.Parse(file)
 		if err != nil {

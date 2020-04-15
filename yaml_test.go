@@ -15,9 +15,9 @@ func TestYamlParser_Parse(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 2, len(actual))
 
-	assert.Equal(t,  "/path/test", actual[0].When.URL)
+	assert.Equal(t, "/path/test", actual[0].When.URL)
 	assert.Equal(t, 2, len(actual[0].When.Headers))
-	assert.Equal(t,"application/json", actual[0].When.Headers["Accept"][0])
+	assert.Equal(t, "application/json", actual[0].When.Headers["Accept"][0])
 	//json parses as float not int
 	assert.Equal(t, "6", actual[0].When.Headers["Content-Length"][0])
 	assert.Equal(t, "abc\ndef\n", actual[0].When.Body)
@@ -44,11 +44,9 @@ func TestYamlParser_Parse_HeaderCasting(t *testing.T) {
 	assert.Equal(t, actual[0].When.Headers["IntSlice"], []string{"1", "2"})
 	assert.Equal(t, actual[0].When.Headers["StringSlice"], []string{"json", "yaml"})
 
-
 	assert.Equal(t, actual[0].Then.Headers["String"], []string{"json"})
 	assert.Equal(t, actual[0].Then.Headers["Int"], []string{"1"})
 	assert.Equal(t, actual[0].Then.Headers["Float"], []string{"1.23"})
 	assert.Equal(t, actual[0].Then.Headers["IntSlice"], []string{"1", "2"})
 	assert.Equal(t, actual[0].Then.Headers["StringSlice"], []string{"json", "yaml"})
 }
-

@@ -6,26 +6,44 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	types "github.com/luckylukas/whenthengo/types"
 	"net/http"
 	"strings"
 	"sync"
 )
 
+type WhenThen struct {
+	When When
+	Then Then
+}
+
+type When struct {
+	Method  string
+	URL     string
+	Headers map[string][]string
+	Body    string
+}
+
+type Then struct {
+	Status  int
+	Delay   int
+	Headers map[string][]string
+	Body    string
+}
+
 type WhenThenClient struct {
 	uri     string
-	backlog []types.WhenThen
+	backlog []WhenThen
 	lock    sync.RWMutex
 }
 
 type WBuilder struct {
-	when   types.When
+	when   When
 	client *WhenThenClient
 }
 
 type TBuilder struct {
-	when   types.When
-	then   types.Then
+	when   When
+	then   Then
 	client *WhenThenClient
 }
 
@@ -50,7 +68,7 @@ func (b *WBuilder) ClearHeadersForKey(key string) *WBuilder {
 }
 
 func (b *WBuilder) ClearHeaders() *WBuilder {
-	b.when.Headers = make(types.Header)
+	b.when.Headers = make(map[string][]string)
 	return b
 }
 
@@ -63,9 +81,9 @@ func (b *WBuilder) ThenReply() *TBuilder {
 	t := TBuilder{
 		client: b.client,
 		when:   b.when,
-		then: types.Then{
+		then: Then{
 			Status:  200,
-			Headers: make(types.Header),
+			Headers: make(map[string][]string),
 		},
 	}
 	return &t
@@ -97,12 +115,12 @@ func (t *TBuilder) ClearHeadersForKey(key string) *TBuilder {
 }
 
 func (t *TBuilder) ClearHeaders() *TBuilder {
-	t.then.Headers = types.Header{}
+	t.then.Headers = map[string][]string{}
 	return t
 }
 
 func (t *TBuilder) AndDo() TerminatingClient {
-	t.client.add(types.WhenThen{
+	t.client.add(WhenThen{
 		When: t.when,
 		Then: t.then,
 	})
@@ -110,14 +128,14 @@ func (t *TBuilder) AndDo() TerminatingClient {
 }
 
 func (t *TBuilder) And() *WhenThenClient {
-	t.client.add(types.WhenThen{
+	t.client.add(WhenThen{
 		When: t.when,
 		Then: t.then,
 	})
 	return t.client
 }
 
-func (c *WhenThenClient) add(wt types.WhenThen) {
+func (c *WhenThenClient) add(wt WhenThen) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	c.backlog = append(c.backlog, wt)
@@ -132,10 +150,10 @@ func NewClient(host, port string) (*WhenThenClient) {
 func (c *WhenThenClient) WhenRequest() *WBuilder {
 	return &WBuilder{
 		client: c,
-		when: types.When{
+		when: When{
 			Method:  "get",
 			URL:     "/",
-			Headers: make(types.Header),
+			Headers: make(map[string][]string),
 		},
 	}
 }
@@ -147,7 +165,7 @@ func (c *WhenThenClient) Publish(ctx context.Context) error {
 		c.lock.Unlock()
 		return err
 	}
-	c.backlog = make([]types.WhenThen, 0)
+	c.backlog = make([]WhenThen, 0)
 	c.lock.Unlock()
 
 	req, err := http.NewRequest(http.MethodPost, c.uri, bytes.NewReader(body))
@@ -182,7 +200,7 @@ func (c *WhenThenClient) Publish(ctx context.Context) error {
 	}
 }
 
-func (c *WhenThenClient) Return() []types.WhenThen {
+func (c *WhenThenClient) Return() []WhenThen {
 	c.lock.RLock()
 	defer c.lock.RUnlock()
 	return c.backlog
@@ -190,5 +208,5 @@ func (c *WhenThenClient) Return() []types.WhenThen {
 
 type TerminatingClient interface {
 	Publish(ctx context.Context) error
-	Return() []types.WhenThen
+	Return() []WhenThen
 }

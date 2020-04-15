@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/luckylukas/whenthengo/types"
 	"io/ioutil"
 	"log"
 	"strings"
@@ -11,25 +10,25 @@ import (
 
 var NOT_FOUND = errors.New("")
 
-type InMemoryStore map[string]*types.WhenThen
+type InMemoryStore map[string]*WhenThen
 
-func (s InMemoryStore) getWhenThenKey(whenthen *types.WhenThen) string {
-	return fmt.Sprintf("%s#%s", types.CleanMethod(whenthen.When.Method), types.CleanUrl(whenthen.When.URL))
+func (s InMemoryStore) getWhenThenKey(whenthen *WhenThen) string {
+	return fmt.Sprintf("%s#%s", CleanMethod(whenthen.When.Method), CleanUrl(whenthen.When.URL))
 }
 
-func (s InMemoryStore) getWhenThenKeyFromRequest(r types.StoreRequest) string {
-	return fmt.Sprintf("%s#%s", types.CleanMethod(r.Method), types.CleanUrl(r.Url))
+func (s InMemoryStore) getWhenThenKeyFromRequest(r StoreRequest) string {
+	return fmt.Sprintf("%s#%s", CleanMethod(r.Method), CleanUrl(r.Url))
 }
 
-func (s InMemoryStore) Store(whenthen types.WhenThen) (key string, err error) {
-	cleaned := &types.WhenThen{
-		When: types.When{
-			Method:  types.CleanMethod(whenthen.When.Method),
-			URL:     types.CleanUrl(whenthen.When.URL),
-			Headers: types.CleanHeaders(whenthen.When.Headers),
-			Body:    types.CleanBodyString(whenthen.When.Body),
+func (s InMemoryStore) Store(whenthen WhenThen) (key string, err error) {
+	cleaned := &WhenThen{
+		When: When{
+			Method:  CleanMethod(whenthen.When.Method),
+			URL:     CleanUrl(whenthen.When.URL),
+			Headers: CleanHeaders(whenthen.When.Headers),
+			Body:    CleanBodyString(whenthen.When.Body),
 		},
-		Then: types.Then{
+		Then: Then{
 			Status:  whenthen.Then.Status,
 			Delay:   whenthen.Then.Delay,
 			Headers: whenthen.Then.Headers,
@@ -43,15 +42,15 @@ func (s InMemoryStore) Store(whenthen types.WhenThen) (key string, err error) {
 	return key, nil
 }
 
-func (s InMemoryStore) getByKey(key string) (*types.WhenThen, error) {
+func (s InMemoryStore) getByKey(key string) (*WhenThen, error) {
 	ret, ok := s[key]
-	if ! ok {
+	if !ok {
 		return nil, NOT_FOUND
 	}
 	return ret, nil
 }
 
-func (s InMemoryStore) FindByRequest(r types.StoreRequest) (*types.Then, error) {
+func (s InMemoryStore) FindByRequest(r StoreRequest) (*Then, error) {
 	key := s.getWhenThenKeyFromRequest(r)
 	item, err := s.getByKey(key)
 	if err != nil {

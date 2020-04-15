@@ -4,8 +4,7 @@ go 1.13
 
 require (
 	github.com/JeremyLoy/config v1.3.0
-	github.com/luckylukas/whenthengo/types v1.0.8
-	github.com/phayes/freeport v0.0.0-20180830031419-95f893ade6f2
+	github.com/luckylukas/cleaningpipe v1.0.0
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.5.1
 	github.com/testcontainers/testcontainers-go v0.4.0

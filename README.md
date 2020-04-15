@@ -1,4 +1,5 @@
 [![Build Status](https://github.com/LuckyLukas/whenthengo/workflows/check-build/badge.svg)](https://github.com/LuckyLukas/whenthengo/actions) [![Release Integrationtest Status](https://github.com/LuckyLukas/whenthengo/workflows/release/badge.svg)](https://github.com/LuckyLukas/whenthengo/actions)
+![codecov](https://codecov.io/gh/LuckyLukas/whenthengo/branch/master/graph/badge.svg)
 # whenthengo
 
 a simple mock http server to use for testing with packages like

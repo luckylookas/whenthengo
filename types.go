@@ -1,7 +1,7 @@
-package types
+package main
 
 import (
-	"github.com/luckylukas/whenthengo/cleaningpipe"
+	"github.com/luckylukas/cleaningpipe"
 	"io"
 )
 

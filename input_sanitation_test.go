@@ -1,4 +1,4 @@
-package types
+package main
 
 import (
 	"bytes"
@@ -25,12 +25,11 @@ func TestString_CleanBodyString(t *testing.T) {
 		}`), `{"some":"json","with":"spaces"}`)
 }
 
-
 func TestString_CleanBodyBytes(t *testing.T) {
 	assert.Equal(t,
 		0,
 		bytes.Compare(
-		CleanBodyBytes([]byte(`
+			CleanBodyBytes([]byte(`
 		{
 			"some": "json",  
 				  "with":  "spaces"
@@ -56,4 +55,3 @@ func TestString_CleanHeaders(t *testing.T) {
 	assert.Equal(t, "application/json", headers["accept"][0])
 	assert.Equal(t, "1234", headers["stuff"][0])
 }
-
