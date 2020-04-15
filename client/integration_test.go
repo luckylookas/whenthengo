@@ -57,7 +57,7 @@ func TestNewClient_Integration(t *testing.T) {
 		WithMethod("post").
 		ThenReply().
 		WithDelay(2000).
-		WithStatus(302).
+		WithStatus(201).
 		AndDo().
 		Publish(ctx)
 
@@ -71,5 +71,5 @@ func TestNewClient_Integration(t *testing.T) {
 	resp, err = http.Post("http://" + ip + ":" + port.Port() + "/data", "application/json", nil)
 	assert.True(t, time.Since(start) > 1800 * time.Millisecond)
 	assert.NoError(t, err)
-	assert.Equal(t, 302, resp.StatusCode)
+	assert.Equal(t, 201, resp.StatusCode)
 }
