@@ -1,4 +1,4 @@
-package cleaning_pipe
+package cleaningpipe
 
 import (
 	"io/ioutil"
