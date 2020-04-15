@@ -56,7 +56,7 @@ func TestNewClient_Integration(t *testing.T) {
 		WithUri("/data/").
 		WithMethod("post").
 		ThenReply().
-		WithDelay(2000)
+		WithDelay(2000).
 		WithStatus(302).
 		AndDo().
 		Publish(ctx)
