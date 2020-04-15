@@ -30,7 +30,7 @@ jobs:
           name: luckylukas/whenthengo
           username: ${{ secrets.docker_username }}
           password: ${{ secrets.docker_token }}
-          tags: "latest,${{ env.RELEASE_VERSION }}"
+          tags: "latest,${{ env.RELEASE_VERSION }},client/${{ env.RELEASE_VERSION }},types/${{ env.RELEASE_VERSION }},cleaningpipe/${{ env.RELEASE_VERSION }},client/latest,types/latest,cleaningpipe/latest"
       - name: integrationtest-image
         run: go test -tags integration
       - name: build-client
