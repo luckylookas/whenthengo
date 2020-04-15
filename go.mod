@@ -1,4 +1,4 @@
-module github/luckylukas/whenthengo
+module github.com/luckylukas/whenthengo
 
 go 1.13
 
