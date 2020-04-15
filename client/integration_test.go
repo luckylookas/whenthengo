@@ -11,6 +11,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestNewClient_Integration(t *testing.T) {
@@ -55,6 +56,7 @@ func TestNewClient_Integration(t *testing.T) {
 		WithUri("/data/").
 		WithMethod("post").
 		ThenReply().
+		WithDelay(2000)
 		WithStatus(302).
 		AndDo().
 		Publish(ctx)
@@ -65,7 +67,9 @@ func TestNewClient_Integration(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 200, resp.StatusCode)
 
+	start := time.Now()
 	resp, err = http.Post("http://" + ip + ":" + port.Port() + "/data", "application/json", nil)
+	assert.True(t, time.Since(start) > 1800 * time.Millisecond)
 	assert.NoError(t, err)
 	assert.Equal(t, 302, resp.StatusCode)
 }

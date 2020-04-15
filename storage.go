@@ -38,6 +38,7 @@ func (s InMemoryStore) Store(whenthen types.WhenThen) (key string, err error) {
 	}
 
 	key = s.getWhenThenKey(cleaned)
+	log.Println("adding when for ", key)
 	s[key] = cleaned
 	return key, nil
 }

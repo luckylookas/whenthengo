@@ -37,7 +37,7 @@ func getHandleFunc(storage *InMemoryStore) http.HandlerFunc {
 		then, err := storage.FindByRequest(types.NewStoreRequest(r.URL.Path, r.Method, types.Header(r.Header), r.Body))
 		if errors.Is(err, NOT_FOUND) {
 			w.WriteHeader(404)
-			fmt.Fprintln(w, errors.Unwrap(err))
+			fmt.Fprint(w, errors.Unwrap(err))
 			return
 		}
 		if err != nil {
@@ -55,11 +55,11 @@ func writeThen(w http.ResponseWriter, then *types.Then) {
 		time.Sleep(time.Duration(then.Delay) * time.Millisecond)
 	}
 	for key, value := range then.Headers {
-		w.Header().Set(key, "")
+		w.Header().Del(key)
 		for _, v := range value {
 			w.Header().Add(key, v)
 		}
 	}
 	w.WriteHeader(then.Status)
-	fmt.Fprintln(w, then.Body)
+	fmt.Fprint(w, then.Body)
 }

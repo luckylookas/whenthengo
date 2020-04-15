@@ -93,7 +93,7 @@ func TestLatestReleaseWithTestContainersGo_Json(t *testing.T) {
 	assert.Equal(t, 200, resp.StatusCode)
 	assert.NoError(t, err)
 	assert.Equal(t, "some-data", resp.Header.Get("some-header"))
-	assert.Equal(t, "k\n", string(body))
+	assert.Equal(t, "k", string(body))
 
 
 	// POST with whitepsace ignoring Body matcher
