@@ -4,7 +4,7 @@
 a simple mock http server to use for testing with packages like
 [testcontainers-go](https://github.com/testcontainers/testcontainers-go).`
 
-<b>looking for the client?</b> [here you go](github.com/luckylukas/whenthengo/client)
+<b>looking for the client?</b> [here you go](https://github.com/LuckyLukas/whenthengo/tree/master/client)
 
 
 # Table of Contents
