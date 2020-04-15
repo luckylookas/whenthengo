@@ -1,3 +1,3 @@
-module github.com/luckylukas/whenthengo-client
+module github.com/luckylukas/whenthengo/client
 
 go 1.13
