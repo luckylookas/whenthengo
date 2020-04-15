@@ -9,15 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Go 1.13
-        uses: actions/setup-go@v1
+        uses: actions/setup-go@78bd24e01a1a907f7ea3e614b4d7c15e563585a8
         with:
           go-version: 1.13
         id: go
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@94c2de77cccf605d74201a8aec6dd8fc0717ad66
       - name: Get current release
         id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@master"
+        uses: "WyriHaximus/github-action-get-previous-tag@4df6a722a08b311473488b5aa97cfc0d510187e2"
         env:
           GITHUB_TOKEN: "${{ secrets.gh_token }}"
       - name: Set env
@@ -25,7 +25,7 @@ jobs:
       - name: build
         run: env GOOS=linux GOARCH=amd64 go build -o executable
       - name: Publish to Registry
-        uses: elgohr/Publish-Docker-Github-Action@master
+        uses: elgohr/Publish-Docker-Github-Action@7f86a5d8e18258739ac1b81703c45b9d7cee0733
         with:
           name: luckylukas/whenthengo
           username: ${{ secrets.docker_username }}
@@ -38,7 +38,7 @@ jobs:
       - name: integrationtest-client
         run: cd client;go test -tags integration
       - name: Tag client module release
-        uses: tvdias/github-tagger@v0.0.1
+        uses: tvdias/github-tagger@v2d42f0520d26e80bfde306d48e90ac8bee6ef8fe
         with:
           repo-token: "${{ secrets.gh_token }}"
           tag: "client/${{ env.RELEASE_VERSION }}"
