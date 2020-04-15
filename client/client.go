@@ -8,8 +8,7 @@ import (
 	"fmt"
 	types "github.com/luckylukas/whenthengo/types"
 	"net/http"
-	"strin" +
-		"gs"
+	"strings"
 	"sync"
 )
 
