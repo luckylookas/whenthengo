@@ -38,7 +38,7 @@ jobs:
       - name: integrationtest-client
         run: cd client;go test -tags integration
       - name: Tag client module release
-        uses: tvdias/github-tagger@v2d42f0520d26e80bfde306d48e90ac8bee6ef8fe
+        uses: tvdias/github-tagger@a570476cc87352c1655c606b29590df6014535e0
         with:
           repo-token: "${{ secrets.gh_token }}"
           tag: "client/${{ env.RELEASE_VERSION }}"
