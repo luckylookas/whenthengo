@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github/luckylukas/whenthengo/types"
+	"github.com/luckylukas/whenthengo/types"
 	"io"
 	"io/ioutil"
 )

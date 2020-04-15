@@ -1,8 +1,7 @@
 package types
 
 import (
-	"github/luckylukas/whenthengo/cleaning_pipe"
-
+	"github.com/luckylukas/whenthengo/cleaningpipe"
 	"io"
 )
 
@@ -64,7 +63,7 @@ func NewStoreRequest(url, method string, header Header, body io.Reader) StoreReq
 	return StoreRequest{
 		Url:     CleanUrl(url),
 		Method:  CleanMethod(method),
-		Body:    cleaning_pipe.NewCleanerPipe(CleanBodyBytes, body),
+		Body:    cleaningpipe.NewCleaningPipe(CleanBodyBytes, body),
 		Headers: CleanHeaders(header),
 	}
 }

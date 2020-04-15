@@ -50,44 +50,44 @@ func TestCleanBodyPipe_Read(t *testing.T) {
 	expected := getExpectedString(10)
 
 	stream := strings.NewReader(test)
-	actual, err := ioutil.ReadAll(NewCleanerPipe(demoCleaner, stream))
+	actual, err := ioutil.ReadAll(NewCleaningPipe(demoCleaner, stream))
 	assert.NoError(t, err)
 	assert.Equal(t, expected, string(actual))
 }
 
 func TestCleanBodyPipe_Read_EdgeCases(t *testing.T) {
-	p := NewCleanerPipe(demoCleaner, strings.NewReader(""))
+	p := NewCleaningPipe(demoCleaner, strings.NewReader(""))
 	actual, err := ioutil.ReadAll(p)
 	assert.NoError(t, err)
 	assert.ElementsMatch(t, actual, EMPTY, "empty reader")
 
-	p = NewCleanerPipe(demoCleaner, nil)
+	p = NewCleaningPipe(demoCleaner, nil)
 	actual, err = ioutil.ReadAll(p)
 	assert.NoError(t, err)
 	assert.ElementsMatch(t, actual, EMPTY, "nil reader")
 
-	p = NewCleanerPipe(demoCleaner, strings.NewReader(" "))
+	p = NewCleaningPipe(demoCleaner, strings.NewReader(" "))
 	actual, err = ioutil.ReadAll(p)
 	assert.NoError(t, err)
 	assert.ElementsMatch(t, actual, EMPTY, "just 1 whitespace")
 
 	justemptys := strings.Repeat(" ", 10000) + "a"
-	p = NewCleanerPipe(demoCleaner, strings.NewReader(justemptys))
+	p = NewCleaningPipe(demoCleaner, strings.NewReader(justemptys))
 	actual, err = ioutil.ReadAll(p)
 	assert.NoError(t, err)
 	assert.ElementsMatch(t, actual, []byte("a"), "full empty buffers before content")
 
-	p = NewCleanerPipe(demoCleaner, strings.NewReader("    a"))
+	p = NewCleaningPipe(demoCleaner, strings.NewReader("    a"))
 	actual, err = ioutil.ReadAll(p)
 	assert.NoError(t, err)
 	assert.Equal(t, string(actual), "a", "leading whitespace")
 
-	p = NewCleanerPipe(demoCleaner, strings.NewReader("a  "))
+	p = NewCleaningPipe(demoCleaner, strings.NewReader("a  "))
 	actual, err = ioutil.ReadAll(p)
 	assert.NoError(t, err)
 	assert.Equal(t, string(actual), "a", "trailing whitespace")
 
-	p = NewCleanerPipe(demoCleaner, strings.NewReader("a    a"))
+	p = NewCleaningPipe(demoCleaner, strings.NewReader("a    a"))
 	actual, err = ioutil.ReadAll(p)
 	assert.NoError(t, err)
 	assert.Equal(t, string(actual), "aa", "prefix and suffix")

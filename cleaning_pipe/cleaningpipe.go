@@ -18,21 +18,21 @@ BenchmarkNakedReader_Read1000-4          6629119               176 ns/op
 BenchmarkNakedReader_Read100000-4        6636699               177 ns/op
 */
 
-type CleanerFunc func([]byte) []byte
+type CleaningFunc func([]byte) []byte
 
-type CleanerPipe struct {
+type CleaningPipe struct {
 	in      io.Reader
 	cleaner func([]byte) []byte
 }
 
-func NewCleanerPipe(c CleanerFunc, in io.Reader) CleanerPipe {
-	return CleanerPipe{
+func NewCleaningPipe(c CleaningFunc, in io.Reader) CleaningPipe {
+	return CleaningPipe{
 		in:      in,
 		cleaner: c,
 	}
 }
 
-func (r CleanerPipe) Read(p []byte) (n int, err error) {
+func (r CleaningPipe) Read(p []byte) (n int, err error) {
 	if r.in == nil {
 		return 0, io.EOF
 	}

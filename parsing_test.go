@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
-	"github/luckylukas/whenthengo/types"
+	"github.com/luckylukas/whenthengo/types"
 	"io"
 	"os"
 	"testing"

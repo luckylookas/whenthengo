@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github/luckylukas/whenthengo/types"
+	types "github.com/luckylukas/whenthengo/types"
 	"net/http"
 	"strings"
 	"sync"

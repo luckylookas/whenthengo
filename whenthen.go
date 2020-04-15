@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github/luckylukas/whenthengo/types"
+	"github.com/luckylukas/whenthengo/types"
 	"log"
 	"net/http"
 	"os"

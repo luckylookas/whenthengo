@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github/luckylukas/whenthengo/types"
+	"github.com/luckylukas/whenthengo/types"
 	"gopkg.in/yaml.v3"
 	"io"
 	"io/ioutil"

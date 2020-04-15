@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"github.com/stretchr/testify/assert"
-	"github/luckylukas/whenthengo/types"
+	"github.com/luckylukas/whenthengo/types"
 	"io"
 	"net/http"
 	"testing"

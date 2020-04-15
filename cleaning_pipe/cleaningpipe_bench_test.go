@@ -14,7 +14,7 @@ func benchmarkCleanBodyPipe_Read(len int, b *testing.B) {
 	test := getTestString(len)
 	var err error
 	var buffer []byte
-	benchy := NewCleanerPipe(demoCleaner, strings.NewReader(test))
+	benchy := NewCleaningPipe(demoCleaner, strings.NewReader(test))
 	b.ReportAllocs()
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {

@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github/luckylukas/whenthengo/types"
+	"github.com/luckylukas/whenthengo/types"
 	"io/ioutil"
 	"log"
 	"strings"
