@@ -40,6 +40,6 @@ jobs:
       - name: Tag client module release
         uses: tvdias/github-tagger@v0.0.1
         with:
-        repo-token: "${{ secrets.gh_token }}"
-        tag: "client/${{ env.RELEASE_VERSION }}"
+          repo-token: "${{ secrets.gh_token }}"
+          tag: "client/${{ env.RELEASE_VERSION }}"
 
