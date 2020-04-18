@@ -60,10 +60,10 @@ func TestWriteThen(t *testing.T) {
 func TestGetAddingFunc(t *testing.T) {
 	req := &http.Request{
 		URL: &url.URL{
-			Path:       "/path",
+			Path: "/path",
 		},
 		Method: http.MethodGet,
-		Body: ioutil.NopCloser(strings.NewReader(`[{"When":{"method":"get", "uri": "/path"}, "Then": {"status": 200}}]`)),
+		Body:   ioutil.NopCloser(strings.NewReader(`[{"When":{"method":"get", "url": "/path"}, "Then": {"status": 200}}]`)),
 	}
 
 	buffer := &bytes.Buffer{}
@@ -77,10 +77,10 @@ func TestGetAddingFunc(t *testing.T) {
 func TestGetAddingFunc_JsonMalformed(t *testing.T) {
 	req := &http.Request{
 		URL: &url.URL{
-			Path:       "/path",
+			Path: "/path",
 		},
 		Method: http.MethodGet,
-		Body: ioutil.NopCloser(strings.NewReader(`hen":{"method":"get", "uri": "/path"}, "Then": {"status": 200}}]`)),
+		Body:   ioutil.NopCloser(strings.NewReader(`hen":{"method":"get", "url": "/path"}, "Then": {"status": 200}}]`)),
 	}
 
 	buffer := &bytes.Buffer{}
@@ -91,14 +91,13 @@ func TestGetAddingFunc_JsonMalformed(t *testing.T) {
 	assert.Equal(t, *writer.status, 500)
 }
 
-
 func TestGetAddingFunc_StorageError(t *testing.T) {
 	req := &http.Request{
 		URL: &url.URL{
-			Path:       "/path",
+			Path: "/path",
 		},
 		Method: http.MethodGet,
-		Body: ioutil.NopCloser(strings.NewReader(`[{"When":{"method":"get", "uri": "/path"}, "Then": {"status": 200}}]`)),
+		Body:   ioutil.NopCloser(strings.NewReader(`[{"When":{"method":"get", "url": "/path"}, "Then": {"status": 200}}]`)),
 	}
 
 	buffer := &bytes.Buffer{}
@@ -112,7 +111,7 @@ func TestGetAddingFunc_StorageError(t *testing.T) {
 func TestGetHandleFunc(t *testing.T) {
 	req := &http.Request{
 		URL: &url.URL{
-			Path:       "/path",
+			Path: "/path",
 		},
 		Method: http.MethodGet,
 	}
@@ -128,10 +127,10 @@ func TestGetHandleFunc(t *testing.T) {
 func TestGetHandleFunc_Body(t *testing.T) {
 	req := &http.Request{
 		URL: &url.URL{
-			Path:       "/any",
+			Path: "/any",
 		},
 		Method: http.MethodGet,
-		Body: ioutil.NopCloser(strings.NewReader(`[{"When":{"method":"any", "uri": "/any"}, "Then": {"status": 200}}]`)),
+		Body:   ioutil.NopCloser(strings.NewReader(`[{"When":{"method":"any", "url": "/any"}, "Then": {"status": 200}}]`)),
 	}
 
 	buffer := &bytes.Buffer{}
@@ -145,10 +144,10 @@ func TestGetHandleFunc_Body(t *testing.T) {
 func TestGetHandleFunc_NoMatch(t *testing.T) {
 	req := &http.Request{
 		URL: &url.URL{
-			Path:       "/any",
+			Path: "/any",
 		},
 		Method: http.MethodGet,
-		Body: ioutil.NopCloser(strings.NewReader(`any`)),
+		Body:   ioutil.NopCloser(strings.NewReader(`any`)),
 	}
 
 	buffer := &bytes.Buffer{}
@@ -159,14 +158,13 @@ func TestGetHandleFunc_NoMatch(t *testing.T) {
 	assert.Equal(t, *writer.status, 404)
 }
 
-
 func TestGetHandleFunc_WrappedErrorNoMatch(t *testing.T) {
 	req := &http.Request{
 		URL: &url.URL{
-			Path:       "/any",
+			Path: "/any",
 		},
 		Method: http.MethodGet,
-		Body: ioutil.NopCloser(strings.NewReader(`any`)),
+		Body:   ioutil.NopCloser(strings.NewReader(`any`)),
 	}
 
 	buffer := &bytes.Buffer{}
@@ -180,10 +178,10 @@ func TestGetHandleFunc_WrappedErrorNoMatch(t *testing.T) {
 func TestGetHandleFunc_UnknownError(t *testing.T) {
 	req := &http.Request{
 		URL: &url.URL{
-			Path:       "/any",
+			Path: "/any",
 		},
 		Method: http.MethodGet,
-		Body: ioutil.NopCloser(strings.NewReader(`any`)),
+		Body:   ioutil.NopCloser(strings.NewReader(`any`)),
 	}
 
 	buffer := &bytes.Buffer{}
@@ -192,4 +190,82 @@ func TestGetHandleFunc_UnknownError(t *testing.T) {
 	getHandleFunc(MockFailStorage{})(writer, req)
 
 	assert.Equal(t, *writer.status, 500)
+}
+
+// issue related tests
+
+func TestGetAddingFunc_I11_SameKey(t *testing.T) {
+	req, _ := http.NewRequest("post", "/api/post", ioutil.NopCloser(strings.NewReader(`
+			[
+			  {
+				"When": {
+				  "method": "post",
+				  "url": "/api/post",
+				  "headers:": {
+					"authorization": ["bad"]
+				  }
+				},
+				"Then": {
+				  "status": 401
+				}
+			  },
+			  {
+				"When": {
+				  "method": "post",
+				  "url": "/api/post",
+				  "headers:": {
+					"authorization": ["good"]
+				  }
+				},
+				"Then": {
+				  "status": 201
+				}
+			  }
+			]
+		`)))
+	req.Header.Add("authorization", "good")
+
+	store := &InMemoryStore{}
+
+	buffer := &bytes.Buffer{}
+	writer := NewMockWriter(buffer)
+
+	getAddingFunc(store)(writer, req)
+
+	assert.Equal(t, *writer.status, 201)
+
+	items, err := store.getByKey(store.getWhenThenKeyFromRequest(NewStoreRequest("/api/post", "post", nil, nil)))
+	assert.NoError(t, err)
+
+	assert.Equal(t, 2, len(items), "to little got written to store")
+}
+
+
+func TestGetAddingFunc_I11_PropertyTypoInBody(t *testing.T) {
+	req, _ := http.NewRequest("post", "/api/post", ioutil.NopCloser(strings.NewReader(`
+			[
+			  {
+				"When": {
+				  "method": "post",
+				  "path": "/api/post",
+				  "headers:": {
+					"authorization": ["bad"]
+				  }
+				},
+				"Then": {
+				  "status": 401
+				}
+			  }
+			]
+		`)))
+	req.Header.Add("authorization", "good")
+
+	store := &InMemoryStore{}
+
+	buffer := &bytes.Buffer{}
+	writer := NewMockWriter(buffer)
+
+	getAddingFunc(store)(writer, req)
+
+	assert.Equal(t, *writer.status, 400)
 }

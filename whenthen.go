@@ -10,29 +10,29 @@ import (
 )
 
 func main() {
-	var storage InMemoryStore = make(map[string]*WhenThen)
-
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-
 	configuration := LoadConfig()
+	err := run(configuration, InMemoryStore{}, sigs)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func run(configuration *Configuration, storage Store, signals <-chan os.Signal) error {
 
 	if err := ParseAndStoreWhenThens(configuration, storage); err != nil {
-		log.Fatal(err)
-		return
+		return err
 	}
 
-	http.HandleFunc("/whenthengo/whenthen", getAddingFunc(&storage))
-
-	http.HandleFunc("/whenthengo/up", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(200)
-	})
-
-	http.HandleFunc("/", getHandleFunc(&storage))
+	http.HandleFunc("/whenthengo/whenthen", getAddingFunc(storage))
+	http.HandleFunc("/whenthengo/up", func(w http.ResponseWriter, r *http.Request) {w.WriteHeader(200)})
+	http.HandleFunc("/", getHandleFunc(storage))
 
 	go func() {
-		log.Fatal(http.ListenAndServe(":"+strings.TrimPrefix(configuration.Port, ":"), nil))
+		log.Fatal(http.ListenAndServe( ":"+strings.TrimPrefix(configuration.Port, ":"), nil))
 	}()
 
-	<-sigs
+	<-signals
+	return nil
 }
