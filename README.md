@@ -14,7 +14,8 @@ a simple mock http server to use for testing with packages like
 3. [whens](#whens)
 4. [thens](#thens)
 5. [api](#api)
-6. [config format](#formats)
+6. [matching](#matching)
+7. [config format](#formats)
 
 ## what? <a name="what"></a>
 
@@ -67,12 +68,49 @@ Whenthengo will add it to existing configured whenthens.
 
 We also provide a client for that under [here](github.com/luckylukas/whenthengo/client)
 
-### matching
+### matching headers <a name="matching"></a>
 
-Whenthengo will match case insensitive and ignoring whitespace where ever it can.
-It will ignore superfluous headers in the request (which don't match any key in the when setup), 
+Matching headers is case insensitive.
+any spaces in header keys are dropped, so are any spaces, "," or ";" in header values for ease of matching.
 
-_but_ will strictly match ALL header values for any key present in the when. (concatenated with &&)
+Whenthengo will ignore superfluous headers in the request (which don't match any key in the when setup),
+but insistns on having matches for all headers present in the _when_.
+
+#### examples
+
+| when.headers        | request.headers           | match  |
+| ----------- |------------------ | ------------- |
+| key= ["A"]       | key= ["a", "b"]              | true |
+| key= []       | key= ["a", "b"]                 | true |
+| key= ["a"]       | key= ["a;"]              | true |
+| key= ["a", "b"]       | key= ["a"]              | false |
+| key= ["a"]       | key= ["a;encoding=UTF-8"]              | false |
+
+
+### matching body
+
+the body is simply matched by removing any whitespace (```\r,\n, ,\t```) from the configured and the requested bodies and checking for equality.
+
+| when.body        | request.body           | match  |
+| ----------- |------------------ | ------------- |
+| { "data":"a"}      | {\t"data":"a"\n}            | true |
+| {"data": "hello world"}      | {"data":"helloworld"}            | true |
+
+
+### conflicts
+
+if two _whens_ collide, the first one to match will be returned.
+
+for example:
+```json
+[
+{"when": {"url":  "/", "method": "post", "headers": {"accept": ["text", "octet-stream"]}}, "then":  {}}
+{"when": {"url":  "/", "method": "post", "headers": {"accept": ["text"]}}, "then":  {}}
+]
+```
+
+requesting ```POST / accept="text"``` will match the first one return it's then.
+
 
 ## input formats <a name="formats"></a>
 

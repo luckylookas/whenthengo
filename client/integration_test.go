@@ -5,7 +5,6 @@ package client
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
-	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"net/http"
 	"os"
@@ -53,7 +52,7 @@ func TestNewClient_Integration(t *testing.T) {
 		ThenReply().
 		And().
 		WhenRequest().
-		WithUri("/data/").
+		WithUrl("/data/").
 		WithMethod("post").
 		ThenReply().
 		WithDelay(2000).

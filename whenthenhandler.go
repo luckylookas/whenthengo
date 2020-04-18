@@ -19,6 +19,11 @@ func getAddingFunc(storage Store) http.HandlerFunc {
 		}
 
 		for _, item := range whenthens {
+			if Validate(item) != nil {
+				w.WriteHeader(400)
+				fmt.Fprint(w, "invalid json payload")
+				return
+			}
 			_, err := storage.Store(*item)
 			if err != nil {
 				w.WriteHeader(500)

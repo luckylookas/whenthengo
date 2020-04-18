@@ -1,7 +1,7 @@
 package client
 
 import (
-	"gotest.tools/assert"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -16,7 +16,7 @@ func TestNewClient_Defaults(t *testing.T) {
 		AndDo().
 		Return()
 
-	assert.Equal(t, whenthen[0].When.URL, "/")
+	assert.Equal(t, whenthen[0].When.Url, "/")
 	assert.Equal(t, whenthen[0].When.Method, "get")
 	assert.Equal(t, whenthen[0].Then.Status, 200)
 	assert.Equal(t, whenthen[1].When.Method, "post")

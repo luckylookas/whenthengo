@@ -18,7 +18,7 @@ type WhenThen struct {
 
 type When struct {
 	Method  string
-	URL     string
+	Url     string
 	Headers map[string][]string
 	Body    string
 }
@@ -31,7 +31,7 @@ type Then struct {
 }
 
 type WhenThenClient struct {
-	uri     string
+	url     string
 	backlog []WhenThen
 	lock    sync.RWMutex
 }
@@ -52,8 +52,8 @@ func (b *WBuilder) WithMethod(method string) *WBuilder {
 	return b
 }
 
-func (b *WBuilder) WithUri(uri string) *WBuilder {
-	b.when.URL = uri
+func (b *WBuilder) WithUrl(url string) *WBuilder {
+	b.when.Url = url
 	return b
 }
 
@@ -143,7 +143,7 @@ func (c *WhenThenClient) add(wt WhenThen) {
 
 func NewClient(host, port string) (*WhenThenClient) {
 	return &WhenThenClient{
-		uri: fmt.Sprintf("http://%s:%s/whenthengo/whenthen", host, strings.TrimLeft(port, ":")),
+		url: fmt.Sprintf("http://%s:%s/whenthengo/whenthen", host, strings.TrimLeft(port, ":")),
 	}
 }
 
@@ -152,7 +152,7 @@ func (c *WhenThenClient) WhenRequest() *WBuilder {
 		client: c,
 		when: When{
 			Method:  "get",
-			URL:     "/",
+			Url:     "/",
 			Headers: make(map[string][]string),
 		},
 	}
@@ -168,7 +168,7 @@ func (c *WhenThenClient) Publish(ctx context.Context) error {
 	c.backlog = make([]WhenThen, 0)
 	c.lock.Unlock()
 
-	req, err := http.NewRequest(http.MethodPost, c.uri, bytes.NewReader(body))
+	req, err := http.NewRequest(http.MethodPost, c.url, bytes.NewReader(body))
 	if err != nil {
 		return err
 	}
