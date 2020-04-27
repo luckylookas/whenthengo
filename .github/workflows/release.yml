@@ -46,4 +46,13 @@ jobs:
         with:
           repo-token: "${{ secrets.gh_token }}"
           tag: "client/${{ env.RELEASE_VERSION }}"
+      - name: build-transport
+        run: cd transport;env GOOS=linux GOARCH=amd64 go build -o executable
+      - name: integrationtest-transport
+        run: cd transport;go test -tags integration
+      - name: Tag transport module release
+        uses: tvdias/github-tagger@a570476cc87352c1655c606b29590df6014535e0
+        with:
+          repo-token: "${{ secrets.gh_token }}"
+          tag: "transport/${{ env.RELEASE_VERSION }}"
 
