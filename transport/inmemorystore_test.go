@@ -2,7 +2,6 @@ package transport
 
 import (
 	"errors"
-	"github.com/luckylukas/whenthengo/client"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"strings"
@@ -11,8 +10,8 @@ import (
 
 func TestStorage_GetWhenThenKey(t *testing.T) {
 	s := InMemoryStore{}
-	assert.Equal(t, s.getWhenThenKey(client.WhenThen{
-		When: client.When{
+	assert.Equal(t, s.getWhenThenKey(WhenThen{
+		When: When{
 			Url:    "/path/123",
 			Method: "GET",
 		},
@@ -29,8 +28,8 @@ func TestStorage_GetWhenThenKeyFromRequest(t *testing.T) {
 
 func TestStorage_Store_and_Find_CleanableMismatches_Match(t *testing.T) {
 	s := InMemoryStore{}
-	test := client.WhenThen{
-		When: client.When{
+	test := WhenThen{
+		When: When{
 			Url:    "abc/def",
 			Method: "get",
 			Headers: CleanHeaders(map[string][]string{
@@ -38,7 +37,7 @@ func TestStorage_Store_and_Find_CleanableMismatches_Match(t *testing.T) {
 			}),
 			Body: "abc",
 		},
-		Then: client.Then{
+		Then: Then{
 			Status: 100,
 		},
 	}
@@ -58,12 +57,12 @@ func TestStorage_Store_and_Find_CleanableMismatches_Match(t *testing.T) {
 
 func TestStorage_Store_and_Find_Header_KeyMismatch_NoMatch(t *testing.T) {
 	s := InMemoryStore{}
-	test := client.WhenThen{
-		When: client.When{
+	test := WhenThen{
+		When: When{
 			Url:    "abc/def",
 			Method: "get",
 		},
-		Then: client.Then{
+		Then: Then{
 			Status: 100,
 		},
 	}
@@ -79,13 +78,13 @@ func TestStorage_Store_and_Find_Header_KeyMismatch_NoMatch(t *testing.T) {
 
 func TestStorage_Store_and_Find_Header_ContentMismatch_NoMatch(t *testing.T) {
 	s := InMemoryStore{}
-	test := client.WhenThen{
-		When: client.When{
+	test := WhenThen{
+		When: When{
 			Url:     "abc/def",
 			Method:  "get",
 			Headers: map[string][]string{"something": {"this"}},
 		},
-		Then: client.Then{
+		Then: Then{
 			Status: 100,
 			Delay:  1,
 			Headers: map[string][]string{
@@ -106,13 +105,13 @@ func TestStorage_Store_and_Find_Header_ContentMismatch_NoMatch(t *testing.T) {
 
 func TestStorage_Store_and_Find_Header_When_IsSubsetOf_HeaderRequest_Match(t *testing.T) {
 	s := InMemoryStore{}
-	test := client.WhenThen{
-		When: client.When{
+	test := WhenThen{
+		When: When{
 			Url:     "abc/def",
 			Method:  "get",
 			Headers: map[string][]string{"something": {"this"}},
 		},
-		Then: client.Then{
+		Then: Then{
 			Status: 100,
 			Delay:  1,
 			Headers: map[string][]string{
@@ -134,13 +133,13 @@ func TestStorage_Store_and_Find_Header_When_IsSubsetOf_HeaderRequest_Match(t *te
 
 func TestStorage_Store_and_Find_Header_Request_IsSubsetOf_HeaderWhen_NoMatch(t *testing.T) {
 	s := InMemoryStore{}
-	test := client.WhenThen{
-		When: client.When{
+	test := WhenThen{
+		When: When{
 			Url:     "abc/def",
 			Method:  "get",
 			Headers: map[string][]string{"something": {"this", "both"}},
 		},
-		Then: client.Then{
+		Then: Then{
 			Status: 100,
 			Delay:  1,
 			Headers: map[string][]string{
@@ -161,13 +160,13 @@ func TestStorage_Store_and_Find_Header_Request_IsSubsetOf_HeaderWhen_NoMatch(t *
 
 func TestStorage_Store_and_Find_Header_No_Intersection_Match(t *testing.T) {
 	s := InMemoryStore{}
-	test := client.WhenThen{
-		When: client.When{
+	test := WhenThen{
+		When: When{
 			Url:     "abc/def",
 			Method:  "get",
 			Headers: map[string][]string{"something": {"this", "both"}},
 		},
-		Then: client.Then{
+		Then: Then{
 			Status: 100,
 			Delay:  1,
 			Headers: map[string][]string{
@@ -188,14 +187,14 @@ func TestStorage_Store_and_Find_Header_No_Intersection_Match(t *testing.T) {
 
 func TestStorage_Store_and_Find_Body_WhenBody_RequestNoBody_NoMatch(t *testing.T) {
 	s := InMemoryStore{}
-	test := client.WhenThen{
-		When: client.When{
+	test := WhenThen{
+		When: When{
 			Url:     "abc/def",
 			Method:  "get",
 			Headers: map[string][]string{"something": {"this", "both"}},
 			Body:    "abc",
 		},
-		Then: client.Then{
+		Then: Then{
 			Status: 100,
 		},
 	}
@@ -211,13 +210,13 @@ func TestStorage_Store_and_Find_Body_WhenBody_RequestNoBody_NoMatch(t *testing.T
 
 func TestStorage_Store_and_Find_Body_WhenNoBody_RequestBody_NoMatch(t *testing.T) {
 	s := InMemoryStore{}
-	test := client.WhenThen{
-		When: client.When{
+	test := WhenThen{
+		When: When{
 			Url:     "abc/def",
 			Method:  "get",
 			Headers: map[string][]string{"something": {"this", "both"}},
 		},
-		Then: client.Then{
+		Then: Then{
 			Status: 100,
 		},
 	}
@@ -233,14 +232,14 @@ func TestStorage_Store_and_Find_Body_WhenNoBody_RequestBody_NoMatch(t *testing.T
 
 func TestStorage_Store_and_Find_Body_Mismatch_NoMatch(t *testing.T) {
 	s := InMemoryStore{}
-	test := client.WhenThen{
-		When: client.When{
+	test := WhenThen{
+		When: When{
 			Url:     "abc/def",
 			Method:  "get",
 			Headers: map[string][]string{"something": {"this", "both"}},
 			Body:    "abc",
 		},
-		Then: client.Then{
+		Then: Then{
 			Status: 100,
 		},
 	}
@@ -265,8 +264,8 @@ func (_ FailReader) Read([]byte) (n int, err error) {
 
 func TestStorage_FindByRequest_BodyReader_Error(t *testing.T) {
 	s := InMemoryStore{}
-	test := client.WhenThen{
-		When: client.When{
+	test := WhenThen{
+		When: When{
 			Url:    "abc/def",
 			Method: "get",
 			Headers: CleanHeaders(map[string][]string{
@@ -274,7 +273,7 @@ func TestStorage_FindByRequest_BodyReader_Error(t *testing.T) {
 			}),
 			Body: "abc",
 		},
-		Then: client.Then{
+		Then: Then{
 			Status: 100,
 		},
 	}
@@ -294,8 +293,8 @@ func TestStorage_FindByRequest_BodyReader_Error(t *testing.T) {
 
 func TestStorage_Store_MultipleEntriesForKey_Issue11(t *testing.T) {
 	s := InMemoryStore{}
-	test1 := client.WhenThen{
-		When: client.When{
+	test1 := WhenThen{
+		When: When{
 			Url:    "abc/def",
 			Method: "get",
 			Headers: CleanHeaders(map[string][]string{
@@ -303,15 +302,15 @@ func TestStorage_Store_MultipleEntriesForKey_Issue11(t *testing.T) {
 			}),
 			Body: "abc",
 		},
-		Then: client.Then{
+		Then: Then{
 			Status: 100,
 		},
 	}
 	key1, err := s.Store(test1)
 	assert.NoError(t, err)
 	assert.NotNil(t, key1)
-	test2 := client.WhenThen{
-		When: client.When{
+	test2 := WhenThen{
+		When: When{
 			Url:    "abc/def",
 			Method: "get",
 			Headers: CleanHeaders(map[string][]string{
@@ -319,7 +318,7 @@ func TestStorage_Store_MultipleEntriesForKey_Issue11(t *testing.T) {
 			}),
 			Body: "abc",
 		},
-		Then: client.Then{
+		Then: Then{
 			Status: 100,
 		},
 	}
@@ -340,8 +339,8 @@ func TestStorage_Store_MultipleEntriesForKey_Issue11(t *testing.T) {
 
 func TestStorage_Store_MultipleConflictingEntriesForKey_Issue11_FindFirst(t *testing.T) {
 	s := InMemoryStore{}
-	test1 := client.WhenThen{
-		When: client.When{
+	test1 := WhenThen{
+		When: When{
 			Url:    "abc/def",
 			Method: "get",
 			Headers: CleanHeaders(map[string][]string{
@@ -349,15 +348,15 @@ func TestStorage_Store_MultipleConflictingEntriesForKey_Issue11_FindFirst(t *tes
 			}),
 			Body: "abc",
 		},
-		Then: client.Then{
+		Then: Then{
 			Status: 100,
 		},
 	}
 	key1, err := s.Store(test1)
 	assert.NoError(t, err)
 	assert.NotNil(t, key1)
-	test2 := client.WhenThen{
-		When: client.When{
+	test2 := WhenThen{
+		When: When{
 			Url:    "abc/def",
 			Method: "get",
 			Headers: CleanHeaders(map[string][]string{
@@ -365,7 +364,7 @@ func TestStorage_Store_MultipleConflictingEntriesForKey_Issue11_FindFirst(t *tes
 			}),
 			Body: "abc",
 		},
-		Then: client.Then{
+		Then: Then{
 			Status: 100,
 		},
 	}

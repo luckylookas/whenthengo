@@ -240,7 +240,6 @@ func TestGetAddingFunc_I11_SameKey(t *testing.T) {
 	assert.Equal(t, 2, len(items), "to little got written to store")
 }
 
-
 func TestGetAddingFunc_I11_PropertyTypoInBody(t *testing.T) {
 	req, _ := http.NewRequest("post", "/api/post", ioutil.NopCloser(strings.NewReader(`
 			[

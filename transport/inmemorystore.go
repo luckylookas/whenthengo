@@ -3,8 +3,7 @@ package transport
 import (
 	"errors"
 	"fmt"
-	"github.com/luckylukas/cleaningpipe"
-	"github.com/luckylukas/whenthengo/client"
+	"github.com/LuckyLukas/cleaningpipe"
 	"io"
 	"io/ioutil"
 	"log"
@@ -13,7 +12,7 @@ import (
 
 var NOT_FOUND = errors.New("")
 
-type InMemoryStore map[string][]client.WhenThen
+type InMemoryStore map[string][]WhenThen
 
 type StoreRequest struct {
 	Url     string
@@ -55,7 +54,7 @@ func (h Header) ContainsAllForKey(key string, values ...string) (contains bool) 
 	return contains
 }
 
-func (s InMemoryStore) getWhenThenKey(whenthen client.WhenThen) string {
+func (s InMemoryStore) getWhenThenKey(whenthen WhenThen) string {
 	return fmt.Sprintf("%s#%s", CleanMethod(whenthen.When.Method), CleanUrl(whenthen.When.Url))
 }
 
@@ -63,15 +62,15 @@ func (s InMemoryStore) getWhenThenKeyFromRequest(r StoreRequest) string {
 	return fmt.Sprintf("%s#%s", CleanMethod(r.Method), CleanUrl(r.Url))
 }
 
-func (s InMemoryStore) Store(whenthen client.WhenThen) (key string, err error) {
-	cleaned := client.WhenThen{
-		When: client.When{
+func (s InMemoryStore) Store(whenthen WhenThen) (key string, err error) {
+	cleaned := WhenThen{
+		When: When{
 			Method:  CleanMethod(whenthen.When.Method),
 			Url:     CleanUrl(whenthen.When.Url),
 			Headers: CleanHeaders(whenthen.When.Headers),
 			Body:    CleanBodyString(whenthen.When.Body),
 		},
-		Then: client.Then{
+		Then: Then{
 			Status:  whenthen.Then.Status,
 			Delay:   whenthen.Then.Delay,
 			Headers: whenthen.Then.Headers,
@@ -82,14 +81,14 @@ func (s InMemoryStore) Store(whenthen client.WhenThen) (key string, err error) {
 	key = s.getWhenThenKey(cleaned)
 
 	if s[key] == nil {
-		s[key] = []client.WhenThen{cleaned}
+		s[key] = []WhenThen{cleaned}
 	} else {
 		s[key] = append(s[key], cleaned)
 	}
 	return key, nil
 }
 
-func (s InMemoryStore) getByKey(key string) ([]client.WhenThen, error) {
+func (s InMemoryStore) getByKey(key string) ([]WhenThen, error) {
 	ret, ok := s[key]
 	if !ok {
 		return nil, NOT_FOUND
@@ -97,7 +96,7 @@ func (s InMemoryStore) getByKey(key string) ([]client.WhenThen, error) {
 	return ret, nil
 }
 
-func (s InMemoryStore) FindByRequest(storeRequest StoreRequest) (*client.Then, error) {
+func (s InMemoryStore) FindByRequest(storeRequest StoreRequest) (*Then, error) {
 	key := s.getWhenThenKeyFromRequest(storeRequest)
 	candidates, err := s.getByKey(key)
 	if err != nil {
@@ -126,7 +125,7 @@ func (s InMemoryStore) FindByRequest(storeRequest StoreRequest) (*client.Then, e
 	return nil, NOT_FOUND
 }
 
-func (s InMemoryStore) headersMatch(storeRequest StoreRequest, candidate client.When) error {
+func (s InMemoryStore) headersMatch(storeRequest StoreRequest, candidate When) error {
 	for key, value := range candidate.Headers {
 		if !storeRequest.Headers.ContainsAllForKey(key, value...) {
 			return fmt.Errorf("header mismatch for %s. %w", key, NOT_FOUND)

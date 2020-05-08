@@ -26,11 +26,11 @@ func run(configuration *Configuration, storage Store, signals <-chan os.Signal) 
 	}
 
 	http.HandleFunc("/whenthengo/whenthen", getAddingFunc(storage))
-	http.HandleFunc("/whenthengo/up", func(w http.ResponseWriter, r *http.Request) {w.WriteHeader(200)})
+	http.HandleFunc("/whenthengo/up", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
 	http.HandleFunc("/", getHandleFunc(storage))
 
 	go func() {
-		log.Fatal(http.ListenAndServe( ":"+strings.TrimPrefix(configuration.Port, ":"), nil))
+		log.Fatal(http.ListenAndServe(":"+strings.TrimPrefix(configuration.Port, ":"), nil))
 	}()
 
 	<-signals

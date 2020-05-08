@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/luckylukas/cleaningpipe"
+	"github.com/LuckyLukas/cleaningpipe"
 	"io"
 )
 

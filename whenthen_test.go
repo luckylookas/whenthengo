@@ -32,7 +32,7 @@ func TestRun(t *testing.T) {
 		ret <- run(&config, InMemoryStore{}, s)
 	}()
 	<-time.After(1 * time.Second)
-	s<-syscall.SIGINT
+	s <- syscall.SIGINT
 
 	assert.NoError(t, <-ret)
 
