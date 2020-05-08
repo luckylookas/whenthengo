@@ -253,14 +253,12 @@ func TestStorage_Store_and_Find_Body_Mismatch_NoMatch(t *testing.T) {
 	assert.True(t, errors.Is(err, NOT_FOUND))
 }
 
-
 type FailReader struct {
-	
 }
 
 var mock_error = errors.New("MOCK")
 
-func (_ FailReader)Read([]byte)(n int, err error) {
+func (_ FailReader) Read([]byte) (n int, err error) {
 	return 0, mock_error
 }
 

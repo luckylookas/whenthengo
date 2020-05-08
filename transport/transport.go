@@ -1,7 +1,6 @@
 package transport
 
 import (
-	"github.com/luckylukas/whenthengo/client"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -12,7 +11,7 @@ type WhenThenGoTrasport struct {
 	store InMemoryStore
 }
 
-func newTransport(config []client.WhenThen) WhenThenGoTrasport {
+func newTransport(config []WhenThen) WhenThenGoTrasport {
 	wt := WhenThenGoTrasport{
 		store: InMemoryStore{},
 	}
@@ -27,7 +26,7 @@ func (wt WhenThenGoTrasport) RoundTrip(request *http.Request) (*http.Response, e
 	return writeThen(then), err
 }
 
-func writeThen(then *client.Then) *http.Response {
+func writeThen(then *Then) *http.Response {
 	w := &http.Response{}
 	if then == nil {
 		w.StatusCode = 404
@@ -49,7 +48,7 @@ func writeThen(then *client.Then) *http.Response {
 	return w
 }
 
-func NewWhenThenGoHttpClient(config []client.WhenThen) *http.Client {
+func NewWhenThenGoHttpClient(config []WhenThen) *http.Client {
 	return &http.Client{
 		Transport: newTransport(config),
 	}

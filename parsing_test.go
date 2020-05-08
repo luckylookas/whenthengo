@@ -21,10 +21,10 @@ func (_ MockSuccessStorage) FindByRequest(_ StoreRequest) (*Then, error) {
 	}, nil
 }
 
-
-type MockFailStorage struct{
+type MockFailStorage struct {
 	Err error
 }
+
 func (m MockFailStorage) Store(WhenThen) (string, error) {
 	if m.Err == nil {
 		return "", errors.New("mock")
@@ -75,7 +75,6 @@ func TestParseAndStoreWhenThens_success(t *testing.T) {
 	err = ParseAndStoreWhenThens(&config, &MockSuccessStorage{})
 	assert.Error(t, err)
 }
-
 
 func TestParseAndStoreWhenThens_Invalid(t *testing.T) {
 	parsers["1"] = MockSuccessParser{}
@@ -153,11 +152,8 @@ func TestValidate_invalid(t *testing.T) {
 			Method: "get",
 			URL:    "/path",
 		},
-		Then: Then{
-		},
+		Then: Then{},
 	}))
 
-	assert.Error(t, Validate(&WhenThen{
-
-	}))
+	assert.Error(t, Validate(&WhenThen{}))
 }

@@ -3,6 +3,8 @@ github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78 h1:w+iIsaOQNcT7O
 github.com/Azure/go-ansiterm v0.0.0-20170929234023-d6e3b3328b78/go.mod h1:LmzpDX56iTiv29bbRTIsUNlaFfuhWRQBWjQdVyAevI8=
 github.com/JeremyLoy/config v1.3.0 h1:EQgVA/owXB7thqhe3ec3Q7P29USfB57NIzqcp8Rgg0Y=
 github.com/JeremyLoy/config v1.3.0/go.mod h1:YcGKcrAs8JJ0AEjPLWL3mCpXWgtuguf9G8WE5H/pLe0=
+github.com/LuckyLukas/cleaningpipe v1.0.1-0.20200508110431-c1c67e8eff1e h1:jZe5thjmTOFZm2pRg/BJf3NpPO5o6mpVBUgYQyrXO2A=
+github.com/LuckyLukas/cleaningpipe v1.0.1-0.20200508110431-c1c67e8eff1e/go.mod h1:KJaz5oxXq7kB0heQo1KTEGfqRfjDVKfh+5I2QcEAsmw=
 github.com/Microsoft/go-winio v0.4.11 h1:zoIOcVf0xPN1tnMVbTtEdI+P8OofVk3NObnwOQ6nK2Q=
 github.com/Microsoft/go-winio v0.4.11/go.mod h1:VhR8bwka0BXejwEJY73c50VrPtXAaKcyvVC4A4RozmA=
 github.com/Microsoft/hcsshim v0.8.6 h1:ZfF0+zZeYdzMIVMZHKtDKJvLHj76XCuVae/jNkjj0IA=
@@ -63,8 +65,6 @@ github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
 github.com/leodido/go-urn v1.2.0/go.mod h1:+8+nEpDfqqsY+g338gtMEUOtuK+4dEMhiQEgxpxOKII=
-github.com/luckylukas/cleaningpipe v1.0.0 h1:vj0VB5CLmnkcd0JQKdf9n+UKAFTxtDAf0FnsHIiAmEs=
-github.com/luckylukas/cleaningpipe v1.0.0/go.mod h1:b9Q4oS/0RoMhea1XfAiQQO5jb4C+qMHvb9KSr7ja8No=
 github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Kysco4FUpU=
 github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
 github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
