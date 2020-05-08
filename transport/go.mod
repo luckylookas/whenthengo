@@ -1,4 +1,4 @@
-module github.com/luckylukas/whenthengo/transport
+module github.com/LuckyLukas/whenthengo/transport
 
 go 1.13
 
