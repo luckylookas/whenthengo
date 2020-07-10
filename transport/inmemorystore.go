@@ -3,7 +3,7 @@ package transport
 import (
 	"errors"
 	"fmt"
-	"github.com/LuckyLukas/cleaningpipe"
+	"github.com/luckylookas/cleaningpipe"
 	"io"
 	"io/ioutil"
 	"log"
